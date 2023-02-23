@@ -38,7 +38,10 @@ export const getProductsBySearch = async (req, res) => {
   const isCategories = categories.split(",")[0] !== "";
   const isCountries = countries.split(",")[0] !== "";
   const isCompanies = companies.split(",")[0] !== "";
-  const isBrands = brands.split(",")[0] !== "";
+  let isBrands = brands.split(",")[0] !== "";
+  if (brands.split(",").includes("undefined")) {
+    isBrands = false;
+  }
   const isCapacities = capacities.split(",")[0] !== "";
 
   console.log(isCategories + "ooo" + isCountries + "ooo" + isCompanies + "ooo" + isBrands + "ooo" + isCapacities);
@@ -66,14 +69,45 @@ export const getProductsBySearch = async (req, res) => {
     }
     if (isCategories && !isCountries) {
       console.log("!!!!!!!");
+      if (categories.includes("All")) {
+        const products = await Product.find();
+        res.json({ data: products });
+        console.log(products.length);
+        return;
+      }
       const products = await Product.find({ category: { $in: categories.split(",") } });
       res.json({ data: products });
       console.log(products.length);
     } else if (!isCategories && isCountries) {
+      if (countries.includes("All")) {
+        const products = await Product.find();
+        res.json({ data: products });
+        console.log(products.length);
+        return;
+      }
       const products = await Product.find({ country: { $in: countries.split(",") } });
       res.json({ data: products });
       console.log(products.length);
     } else if (isCountries && isCategories) {
+      if (categories.split(",").includes("All") && countries.split(",").includes("All")) {
+        console.log("here 1");
+        const products = await Product.find();
+        res.json({ data: products });
+        console.log(products.length);
+        return;
+      } else if (categories.split(",").includes("All")) {
+        console.log("here 2");
+        const products = await Product.find({ country: { $in: countries.split(",") } });
+        res.json({ data: products });
+        console.log(products.length);
+        return;
+      } else if (countries.split(",").includes("All")) {
+        console.log("here 3");
+        const products = await Product.find({ category: { $in: categories.split(",") } });
+        res.json({ data: products });
+        console.log(products.length);
+        return;
+      }
       const products = await Product.find({ $and: [{ category: { $in: categories.split(",") } }, { country: { $in: countries.split(",") } }] });
       res.json({ data: products });
       console.log(products.length);

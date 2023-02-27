@@ -1,11 +1,13 @@
 import express from "express";
 
-import { createProduct, getProducts, getProductsBySearch } from "../controllers/products.js";
+import { createProduct, getProducts, getProductsBySearch, getProductsByFilter } from "../controllers/products.js";
 
 const router = express.Router();
 //import auth from "../middleware/auth.js";
 
 router.get("/search", getProductsBySearch);
+//router.get("/search", getProductsByFilter);
+
 router.get("/", getProducts);
 //0router.get("/:id", getPost);
 

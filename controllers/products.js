@@ -18,20 +18,40 @@ export const createProduct = async (req, res) => {
     res.status(409).json({ message: error.message });
   }
 };
-export const getProducts = async (req, res) => {
-  try {
-    const products = await Product.find();
 
-    res.json({ data: products });
+export const getProducts = async (req, res) => {
+  const { page } = req.query;
+  try {
+    const LIMIT = 12;
+    const startIndex = (Number(page) - 1) * LIMIT;
+
+    const total = await Product.countDocuments({});
+    const products = await Product.find().sort({ _id: -1 }).limit(LIMIT).skip(startIndex);
+
+    res.json({ data: products, currentPage: Number(page), numberOfPages: Math.ceil(total / LIMIT) });
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
 };
 
-export const getProductsBySearch = async (req, res) => {
-  const { categories, countries, companies, brands, capacities } = req.query;
+export const getProductsByFilter = async (req, res) => {
+  const { categories, countries, companies, brands } = req.query;
+  const page = req.query.page;
+  console.log(page);
+
   console.log(categories.split(","), countries.split(","));
-  console.log(companies.split(","), brands.split(","), capacities.split(","));
+  console.log(companies.split(","), brands.split(","));
+  const products = await Product.find();
+  res.json({ data: products });
+};
+
+export const getProductsBySearch = async (req, res) => {
+  const filters = req.query.filters;
+  const page = req.query.page;
+  console.log(filters, page);
+  const { categories, countries, companies, brands } = req.query;
+  console.log(categories.split(","), countries.split(","));
+  console.log(companies.split(","), brands.split(","));
   //   capacities = JSON.parse(capacities);
   //  let capacities2 = JSON.parse(capacities);
   // console.log(capacities2);
@@ -42,82 +62,74 @@ export const getProductsBySearch = async (req, res) => {
   if (brands.split(",").includes("undefined")) {
     isBrands = false;
   }
-  const isCapacities = capacities.split(",")[0] !== "";
-
-  console.log(isCategories + "ooo" + isCountries + "ooo" + isCompanies + "ooo" + isBrands + "ooo" + isCapacities);
+  // const isCapacities = capacities.split(",")[0] !== "";
   try {
+    const Q_ALL_CATEGORIES = { category: { $in: categories.split(",") } };
+    const Q_ALL_COUNTRIES = { country: { $in: countries.split(",") } };
+    const Q_ALL_COMPANIES = { company: { $in: companies.split(",") } };
+    const Q_ALL_BRANDS = { brand: { $in: brands.split(",") } };
+
     // const title = new RegExp(searchQuery, "i");
     let products = [];
     let caps = [];
+    /*
     if (isCapacities && !isBrands && !isCompanies && !isCountries && !isCategories) {
-      const products = await Product.find({ brand: { $in: capacities.split(",") } });
+      const products = await Product.find({ capacity: { $in: capacities.split(",") } });
       res.json({ data: products });
-      console.log(products.length);
       return;
     }
+    */
+
     if (isBrands && !isCompanies && !isCountries && !isCategories) {
-      const products = await Product.find({ brand: { $in: brands.split(",") } });
+      const products = await Product.find(Q_ALL_BRANDS);
       res.json({ data: products });
-      console.log(products.length);
       return;
     }
+
     if (isCompanies && !isCountries && !isCategories) {
-      const products = await Product.find({ company: { $in: companies.split(",") } });
+      const products = await Product.find(Q_ALL_COMPANIES);
       res.json({ data: products });
-      console.log(products.length);
       return;
     }
+
     if (isCategories && !isCountries) {
-      console.log("!!!!!!!");
       if (categories.includes("All")) {
         const products = await Product.find();
         res.json({ data: products });
-        console.log(products.length);
         return;
       }
-      const products = await Product.find({ category: { $in: categories.split(",") } });
+      products = await Product.find(Q_ALL_CATEGORIES);
       res.json({ data: products });
-      console.log(products.length);
     } else if (!isCategories && isCountries) {
       if (countries.includes("All")) {
         const products = await Product.find();
         res.json({ data: products });
-        console.log(products.length);
         return;
       }
-      const products = await Product.find({ country: { $in: countries.split(",") } });
+      const products = await Product.find(Q_ALL_COUNTRIES);
       res.json({ data: products });
-      console.log(products.length);
+      return;
     } else if (isCountries && isCategories) {
+      /// All Categories & All Countries
       if (categories.split(",").includes("All") && countries.split(",").includes("All")) {
-        console.log("here 1");
         const products = await Product.find();
         res.json({ data: products });
-        console.log(products.length);
         return;
       } else if (categories.split(",").includes("All")) {
-        console.log("here 2");
-        const products = await Product.find({ country: { $in: countries.split(",") } });
+        const products = await Product.find(Q_ALL_CATEGORIES);
         res.json({ data: products });
-        console.log(products.length);
         return;
       } else if (countries.split(",").includes("All")) {
-        console.log("here 3");
-        const products = await Product.find({ category: { $in: categories.split(",") } });
+        const products = await Product.find(Q_ALL_COUNTRIES);
         res.json({ data: products });
-        console.log(products.length);
         return;
       }
-      const products = await Product.find({ $and: [{ category: { $in: categories.split(",") } }, { country: { $in: countries.split(",") } }] });
+      const products = await Product.find({ $and: [Q_ALL_CATEGORIES, Q_ALL_COUNTRIES] });
       res.json({ data: products });
-      console.log(products.length);
     } else {
       const products = await Product.find();
       res.json({ data: products });
     }
-    /*else if (isCategories) products = await Product.find({ category: { $in: categories.split(",") } });
-    else if (isCountries) products = await Product.find({ country: { $in: countries.split(",") } });
-*/
   } catch (error) {
     res.status(404).json({ message: error.message });
   }

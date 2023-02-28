@@ -22,7 +22,7 @@ export const createProduct = async (req, res) => {
 export const getProducts = async (req, res) => {
   const { page } = req.query;
   try {
-    const LIMIT = 12;
+    const LIMIT = 20;
     const startIndex = (Number(page) - 1) * LIMIT;
 
     const total = await Product.countDocuments({});
@@ -80,14 +80,22 @@ export const getProductsBySearch = async (req, res) => {
     }
     */
 
-    if (isBrands && !isCompanies && !isCountries && !isCategories) {
+    if (isBrands && !isCompanies && isCountries && isCategories) {
       const products = await Product.find(Q_ALL_BRANDS);
       res.json({ data: products });
       return;
     }
+    if (isBrands && isCompanies && isCountries && isCategories) {
+      const products1 = await Product.find(Q_ALL_BRANDS);
+      const products2 = await Product.find(Q_ALL_COMPANIES);
+      const products = [...products1, ...products2];
+      res.json({ data: products });
+      return;
+    }
 
-    if (isCompanies && !isCountries && !isCategories) {
+    if (isCompanies && isCountries && isCategories) {
       const products = await Product.find(Q_ALL_COMPANIES);
+      console.log(products.length);
       res.json({ data: products });
       return;
     }
@@ -116,11 +124,11 @@ export const getProductsBySearch = async (req, res) => {
         res.json({ data: products });
         return;
       } else if (categories.split(",").includes("All")) {
-        const products = await Product.find(Q_ALL_CATEGORIES);
+        const products = await Product.find(Q_ALL_COUNTRIES);
         res.json({ data: products });
         return;
       } else if (countries.split(",").includes("All")) {
-        const products = await Product.find(Q_ALL_COUNTRIES);
+        const products = await Product.find(Q_ALL_CATEGORIES);
         res.json({ data: products });
         return;
       }

@@ -8,11 +8,11 @@ import productRoutes from "./routes/products.js";
 import morgan from "morgan";
 import { morganLogger } from "./utils/logger.js";
 const app = express();
-app.use(logRequest);
+//app.use(logRequest);
 app.use(setPoweredByHeader);
 app.use(errorHandler);
 //app.use(morgan("tiny"));
-app.use(morganLogger);
+//app.use(morganLogger);
 
 app.use(express.json({ limit: "30mb", extended: true }));
 app.use(express.urlencoded({ limit: "30mb", extended: true }));

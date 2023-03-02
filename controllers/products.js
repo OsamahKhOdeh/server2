@@ -49,16 +49,17 @@ export const getProductsBySearch = async (req, res) => {
   const filters = req.query.filters;
   const page = req.query.page;
   console.log(filters, page);
-  const { categories, countries, companies, brands } = req.query;
+  const { categories, countries, companies, brands, capacities } = req.query;
   console.log(categories.split(","), countries.split(","));
   console.log(companies.split(","), brands.split(","));
   //   capacities = JSON.parse(capacities);
-  //  let capacities2 = JSON.parse(capacities);
-  // console.log(capacities2);
+  //let capacities2 = JSON.parse(capacities);
+  //console.log(capacities2);
   const isCategories = categories.split(",")[0] !== "";
   const isCountries = countries.split(",")[0] !== "";
   const isCompanies = companies.split(",")[0] !== "";
   let isBrands = brands.split(",")[0] !== "";
+
   if (brands.split(",").includes("undefined")) {
     isBrands = false;
   }
@@ -73,13 +74,12 @@ export const getProductsBySearch = async (req, res) => {
     let products = [];
     let caps = [];
     /*
-    if (isCapacities && !isBrands && !isCompanies && !isCountries && !isCategories) {
+    if (isCapacities) {
       const products = await Product.find({ capacity: { $in: capacities.split(",") } });
       res.json({ data: products });
       return;
     }
-    */
-
+*/
     if (isBrands && !isCompanies && isCountries && isCategories) {
       const products = await Product.find(Q_ALL_BRANDS);
       res.json({ data: products });
@@ -141,6 +141,22 @@ export const getProductsBySearch = async (req, res) => {
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
+};
+
+export const updateProduct = async (req, res) => {
+  console.log("UPDATAEEEE");
+  const id = req.params.id;
+  console.log(id);
+  console.log(req.query);
+  console.log(req.body);
+
+  if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No product with id: ${id}`);
+
+  const updatedProduct = req.body;
+  // const updatedPost = { creator, title, message, tags, selectedFile, _id: id };
+  await Product.findByIdAndUpdate(id, updatedProduct, { new: true });
+
+  res.json(updatedProduct);
 };
 
 export default router;

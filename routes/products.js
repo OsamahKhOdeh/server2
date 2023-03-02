@@ -1,6 +1,6 @@
 import express from "express";
 
-import { createProduct, getProducts, getProductsBySearch, getProductsByFilter } from "../controllers/products.js";
+import { createProduct, getProducts, getProductsBySearch, getProductsByFilter, updateProduct } from "../controllers/products.js";
 
 const router = express.Router();
 //import auth from "../middleware/auth.js";
@@ -12,6 +12,8 @@ router.get("/", getProducts);
 //0router.get("/:id", getPost);
 
 router.post("/", createProduct);
+router.patch("/:id", updateProduct);
+
 //router.patch("/:id", auth, updatePost);
 //router.delete("/:id", auth, deletePost);
 //router.patch("/:id/likePost", auth, likePost);

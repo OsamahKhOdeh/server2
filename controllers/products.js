@@ -4,6 +4,42 @@ import mongoose from "mongoose";
 import Product from "../models/product.js";
 
 const router = express.Router();
+const con = {
+  _id: "1",
+  category: "1",
+  country: "1",
+  company: "1",
+  code: "1",
+  brand: "1",
+  price: 1,
+  capacity: "1",
+  image: "1",
+  description: "1",
+  netWeight: 1,
+  grossWeight: 1,
+  palatSize: 1,
+  bl: [],
+  __v: 0,
+  stock: 0,
+};
+const productsForCountries = {
+  _id: "2",
+  category: "2",
+  country: "2",
+  company: "2",
+  code: "2",
+  brand: "2",
+  price: 2,
+  capacity: "2",
+  image: "2",
+  description: "2",
+  netWeight: 2,
+  grossWeight: 2,
+  palatSize: 2,
+  bl: [],
+  __v: 0,
+  stock: 0,
+};
 
 export const createProduct = async (req, res) => {
   const product = req.body;
@@ -100,14 +136,14 @@ export const getProductsBySearch = async (req, res) => {
       return;
     }
 
-    if (isCategories && !isCountries) {
+    if ((isCategories && !isCountries) || (isCategories && countries.includes("All"))) {
       if (categories.includes("All")) {
         const products = await Product.find();
-        res.json({ data: products });
+        res.json({ data: [...products, productsForCountries] });
         return;
       }
       products = await Product.find(Q_ALL_CATEGORIES);
-      res.json({ data: products });
+      res.json({ data: [...products, productsForCountries] });
     } else if (!isCategories && isCountries) {
       if (countries.includes("All")) {
         const products = await Product.find();
@@ -121,22 +157,24 @@ export const getProductsBySearch = async (req, res) => {
       /// All Categories & All Countries
       if (categories.split(",").includes("All") && countries.split(",").includes("All")) {
         const products = await Product.find();
-        res.json({ data: products });
+        res.json({ data: [...products, con] });
         return;
       } else if (categories.split(",").includes("All")) {
         const products = await Product.find(Q_ALL_COUNTRIES);
-        res.json({ data: products });
+        res.json({ data: [...products, con] });
         return;
       } else if (countries.split(",").includes("All")) {
         const products = await Product.find(Q_ALL_CATEGORIES);
-        res.json({ data: products });
+        res.json({ data: [...products, con] });
         return;
       }
       const products = await Product.find({ $and: [Q_ALL_CATEGORIES, Q_ALL_COUNTRIES] });
-      res.json({ data: products });
+      res.json({
+        data: [...products, con],
+      });
     } else {
       const products = await Product.find();
-      res.json({ data: products });
+      res.json({ data: [...products, productsForCountries] });
     }
   } catch (error) {
     res.status(404).json({ message: error.message });
@@ -154,6 +192,7 @@ export const updateProduct = async (req, res) => {
 
   const updatedProduct = req.body;
   // const updatedPost = { creator, title, message, tags, selectedFile, _id: id };
+
   await Product.findByIdAndUpdate(id, updatedProduct, { new: true });
 
   res.json(updatedProduct);

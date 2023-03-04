@@ -8,9 +8,11 @@ const productSchema = mongoose.Schema({
   description: { type: String },
   price: { type: Number },
   stock: { type: Number },
-
+  freezoneToLocalPercentage: { type: Number },
+  additionOnLocalPercentage: { type: Number },
+  datasheet: { type: String },
   capacity: { type: String, required: true },
-  image: { type: String },
+  image: [{ type: String }],
   netWeight: { type: Number },
   grossWeight: { type: Number },
   palatSize: { type: Number },

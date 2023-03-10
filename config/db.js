@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const CONNECTION_URL = "mongodb+srv://osama:osamad12345@clusterags.l4fftvt.mongodb.net/ags?retryWrites=true&w=majority";
-
+//const CONNECTION_URL = "mongodb+srv://osama:12345@cluster0.t3bbjxg.mongodb.net/?retryWrites=true&w=majority";
 // Options for the database connection
 const options = {
   useNewUrlParser: true,

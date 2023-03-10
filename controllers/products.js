@@ -183,6 +183,7 @@ export const getProductsBySearch = async (req, res) => {
 
 export const updateProduct = async (req, res) => {
   console.log("UPDATAEEEE");
+
   const id = req.params.id;
   console.log(id);
   console.log(req.query);
@@ -196,6 +197,16 @@ export const updateProduct = async (req, res) => {
   await Product.findByIdAndUpdate(id, updatedProduct, { new: true });
 
   res.json(updatedProduct);
+};
+
+export const updateDBOps = async (req, res) => {
+  console.log(req.body);
+  try {
+    Product.updateMany({}, { $set: { images: ["https://res.cloudinary.com/dwen6dx2a/image/upload/v1676527391/vhk7vmtc0dtguqoyvc7a.png"] } }, false, true);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+  res.json("Updated");
 };
 
 export default router;

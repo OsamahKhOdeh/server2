@@ -5,6 +5,7 @@ import connect from "./config/db.js";
 import { logRequest, setPoweredByHeader, errorHandler } from "./config/middleware.js";
 import cors from "cors";
 import productRoutes from "./routes/products.js";
+import proformaInvoiceRoutes from "./routes/proformaInvoice.js";
 import morgan from "morgan";
 import { morganLogger } from "./utils/logger.js";
 const app = express();
@@ -21,6 +22,7 @@ app.use(cors());
 const CONNECTION_URL = "mongodb+srv://osama:osamad12345@clusterags.l4fftvt.mongodb.net/ags?retryWrites=true&w=majority";
 //const CONNECTION_URL = "mongodb+srv://test:osamad12345@practice.9rjaqen.mongodb.net/memories_app?retryWrites=true&w=majority";
 app.use("/products", productRoutes);
+app.use("/pi", proformaInvoiceRoutes);
 
 app.get("/", (req, res) => {
   res.send("App is running");

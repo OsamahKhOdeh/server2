@@ -41,8 +41,8 @@ const proformaInvoiceSchema = mongoose.Schema({
   consignee: { type: String },
   party_of_discharge: { type: String },
   final_distination: { type: String },
-  discount: { type: Number },
   additions : {type : Number},
+  discount: { type: Number },
   products: [productSchema],
 });
 

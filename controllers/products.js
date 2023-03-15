@@ -48,6 +48,7 @@ export const createProduct = async (req, res) => {
 
   try {
     await newProduct.save();
+    console.log(newProduct);
     res.header("Access-Control-Allow-Origin", "*");
     res.status(201).json(newProduct);
   } catch (error) {

@@ -1,4 +1,7 @@
 import mongoose from "mongoose";
+import Inc from "mongoose-sequence";
+const AutoIncrement = Inc(mongoose); 
+
 
 const productSchema = mongoose.Schema({
   category: { type: String, required: true },
@@ -44,8 +47,19 @@ const proformaInvoiceSchema = mongoose.Schema({
   additions : {type : Number},
   discount: { type: Number },
   products: [productSchema],
+  user : { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+},{
+  timestamps: true
+});
+ 
+proformaInvoiceSchema.plugin(AutoIncrement, {
+  inc_field: 'pi_no',
+  id: 'piNums',
+  start_seq: 40000
 });
 
 var ProformaInvoice = mongoose.model("ProformaInvoice", proformaInvoiceSchema);
+
+
 
 export default ProformaInvoice;

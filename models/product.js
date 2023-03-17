@@ -27,6 +27,8 @@ const productSchema = mongoose.Schema({
       bookQty: { type: Number },
     },
   ],
+},{
+  timestamps: true
 });
 
 var Product = mongoose.model("Product", productSchema);

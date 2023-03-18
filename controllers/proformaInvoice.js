@@ -11,8 +11,9 @@ export const createProformaInvoice = async (req, res) => {
   const buyer_address = req.body.piInfo.buyerAdress;
   const party_of_discharge = req.body.piInfo.partyOfDischarge;
   const final_distination = req.body.piInfo.finalDistination;
+  const employee = req.body.piInfo.employee;
   const { date, exporter, consignee, discount ,additions } = req.body.piInfo;
-  const pi = { no, exporter, consignee, discount,additions, date, buyer_address, party_of_discharge, final_distination, products };
+  const pi = { employee , no, exporter, consignee, discount,additions, date, buyer_address, party_of_discharge, final_distination, products };
 
   const newProformaInvoice = new ProformaInvoice(pi);
 

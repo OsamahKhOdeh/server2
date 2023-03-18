@@ -47,6 +47,7 @@ const proformaInvoiceSchema = mongoose.Schema({
   additions : {type : Number},
   discount: { type: Number },
   products: [productSchema],
+  employee : { type: String },
   user : { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 },{
   timestamps: true

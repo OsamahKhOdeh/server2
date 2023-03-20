@@ -389,3 +389,16 @@
 20230320	16:10:02	2677cbc2-6e8d-4ddc-898e-c604b5f9c301	GET	/products/search?categories=All&countries=All&companies=&brands=&capacities=	http://localhost:3000
 20230320	16:10:28	6a8976d7-c509-4dc5-bd3c-7f711632d3e6	GET	/products/search?categories=All&countries=All&companies=&brands=&capacities=	http://localhost:3000
 20230320	16:25:19	ab6ac3d9-ded7-4eff-9500-038a438a07bf	GET	/download/6408c634aa7dd4c7ad6b0abe	http://localhost:3000
+20230320	16:33:13	680849b7-5fe7-4a44-956c-ac961e9194c7	GET	/products/search?categories=All&countries=All&companies=&brands=&capacities=	http://localhost:3000
+20230320	16:34:34	eca4f20a-caa3-42bb-956a-4ec96336eeba	GET	/products/search?categories=All&countries=All&companies=&brands=&capacities=	http://localhost:3000
+20230320	16:44:33	8af37263-f13d-403e-96f5-f29d00229a7f	GET	/products/search?categories=All&countries=All&companies=&brands=&capacities=	http://localhost:3000
+20230320	16:44:44	208510e2-b967-4c8b-8254-d2039cffa37c	GET	/products/search?categories=All&countries=All&companies=&brands=&capacities=	http://localhost:3000
+20230320	16:44:47	8c3fe67e-ecb1-4bad-9245-bf7c19d8963f	GET	/products/search?categories=All&countries=All&companies=&brands=&capacities=	http://localhost:3000
+20230320	16:44:53	60a4ed78-e53b-4cde-a148-8bc2e193e4e0	GET	/products/search?categories=All&countries=All&companies=&brands=&capacities=	http://localhost:3000
+20230320	16:50:26	bc8c46de-2052-4e48-927d-aab44ec4afb1	GET	/products/search?categories=All&countries=All&companies=&brands=&capacities=	http://localhost:3000
+20230320	16:50:45	c97029ea-e2e1-46ea-ac49-c06b956fef94	GET	/products/search?categories=All&countries=All&companies=&brands=&capacities=	http://localhost:3000
+20230320	16:50:48	0429a9e7-680f-441f-a9fc-39900154d98f	GET	/products/search?categories=All&countries=All&companies=&brands=&capacities=	http://localhost:3000
+20230320	16:50:53	07b5c3b9-1f69-47b0-b7a3-343470555a6c	GET	/products/search?categories=All&countries=All&companies=&brands=&capacities=	http://localhost:3000
+20230320	16:52:42	c958dfe3-1f73-48ad-9220-9f98be5c1721	GET	/products/search?categories=All&countries=All&companies=&brands=&capacities=	http://localhost:3000
+20230320	16:52:51	c669cc97-89c3-4960-b24f-840ca075e329	GET	/products/search?categories=All&countries=All&companies=&brands=&capacities=	http://localhost:3000
+20230320	16:52:56	8023582f-aee6-4c2c-92d7-dd1b81867283	GET	/products/search?categories=All&countries=All&companies=&brands=&capacities=	http://localhost:3000

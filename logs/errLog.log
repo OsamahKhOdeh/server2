@@ -38,3 +38,5 @@
 20230318	10:18:32	f6f6e451-732f-4a28-a109-42bde7b4e76c	Too Many Requests: Too many login attempts from this IP, please try again after a 60 second pause	POST	/	http://localhost:3000
 20230318	10:18:32	36a6ef2f-6d03-43dd-b3f7-1bc4d3cda14e	Too Many Requests: Too many login attempts from this IP, please try again after a 60 second pause	POST	/	http://localhost:3000
 20230318	10:18:33	926b2562-d950-4a07-978c-912c7de448da	Too Many Requests: Too many login attempts from this IP, please try again after a 60 second pause	POST	/	http://localhost:3000
+20230320	13:13:01	a3e54b30-f54d-4373-a1ab-238592648989	ReferenceError: __dirname is not defined	GET	/download/6408790e0633afb54fd7a0fc	undefined
+20230320	13:14:18	23b3d757-e61b-4797-92a4-c3aa4be42464	ReferenceError: filename is not defined	GET	/download/6408790e0633afb54fd7a0fc	undefined

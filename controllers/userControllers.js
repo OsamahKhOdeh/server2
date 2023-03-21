@@ -21,6 +21,8 @@ const getAllUsers = asyncHandler(async (req, res) => {
 // @access Private
 const createNewUser = asyncHandler(async (req, res) => {
     const { username, password, roles } = req.body
+    console.log(username, password, roles);
+
 
     // Confirm data
     if (!username || !password || !Array.isArray(roles) || !roles.length) {
@@ -53,7 +55,11 @@ const createNewUser = asyncHandler(async (req, res) => {
 // @route PATCH /users
 // @access Private
 const updateUser = asyncHandler(async (req, res) => {
-    const { id, username, roles, active, password } = req.body
+    const id = req.params.id;
+
+    console.log("Hero");
+    const {  username, roles, active, password } = req.body
+    console.log( id,  username, roles, active, password);
 
     // Confirm data 
     if (!id || !username || !Array.isArray(roles) || !roles.length || typeof active !== 'boolean') {

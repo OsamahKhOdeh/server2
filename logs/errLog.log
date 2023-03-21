@@ -40,3 +40,8 @@
 20230318	10:18:33	926b2562-d950-4a07-978c-912c7de448da	Too Many Requests: Too many login attempts from this IP, please try again after a 60 second pause	POST	/	http://localhost:3000
 20230320	13:13:01	a3e54b30-f54d-4373-a1ab-238592648989	ReferenceError: __dirname is not defined	GET	/download/6408790e0633afb54fd7a0fc	undefined
 20230320	13:14:18	23b3d757-e61b-4797-92a4-c3aa4be42464	ReferenceError: filename is not defined	GET	/download/6408790e0633afb54fd7a0fc	undefined
+20230321	15:51:34	e847f352-2bc5-43ca-afce-e857756f558c	ReferenceError: _id is not defined	PATCH	/users/6412ebe57ead573850327cf2	http://localhost:3000
+20230321	15:51:53	71cdf913-435f-481c-942d-c79491a43e69	ReferenceError: id is not defined	PATCH	/users/6412ebe57ead573850327cf2	http://localhost:3000
+20230321	15:59:37	0eb78858-ae5d-47ef-993d-cd334299ebdc	Too Many Requests: Too many login attempts from this IP, please try again after a 60 second pause	POST	/	http://localhost:3000
+20230321	15:59:37	f0ec648e-02ca-4aad-bb12-dce11388f298	Too Many Requests: Too many login attempts from this IP, please try again after a 60 second pause	POST	/	http://localhost:3000
+20230321	15:59:44	a0a592fa-a873-4900-b919-9a9c1d69199f	Too Many Requests: Too many login attempts from this IP, please try again after a 60 second pause	POST	/	http://localhost:3000

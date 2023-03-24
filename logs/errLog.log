@@ -45,3 +45,6 @@
 20230321	15:59:37	0eb78858-ae5d-47ef-993d-cd334299ebdc	Too Many Requests: Too many login attempts from this IP, please try again after a 60 second pause	POST	/	http://localhost:3000
 20230321	15:59:37	f0ec648e-02ca-4aad-bb12-dce11388f298	Too Many Requests: Too many login attempts from this IP, please try again after a 60 second pause	POST	/	http://localhost:3000
 20230321	15:59:44	a0a592fa-a873-4900-b919-9a9c1d69199f	Too Many Requests: Too many login attempts from this IP, please try again after a 60 second pause	POST	/	http://localhost:3000
+20230324	12:42:44	7546ab7a-2cd2-4fe8-9129-0d339157526e	MongooseError: Operation `users.findOne()` buffering timed out after 10000ms	POST	/auth	http://localhost:3000
+20230324	12:42:46	1d9af6f1-d60c-40be-90bc-ef56e5066b4d	MongooseError: Operation `users.findOne()` buffering timed out after 10000ms	POST	/auth	http://localhost:3000
+20230324	12:42:52	42246d9e-a38b-48bd-9c1c-93f4daa3e6ac	MongooseError: Operation `users.findOne()` buffering timed out after 10000ms	POST	/auth	http://localhost:3000

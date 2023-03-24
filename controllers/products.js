@@ -1,5 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
+import asyncHandler from 'express-async-handler'
 
 import Product from "../models/product.js";
 
@@ -199,6 +200,30 @@ export const updateProduct = async (req, res) => {
   res.json(updatedProduct);
 };
 
+
+
+
+export const deleteProduct = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+  // Confirm data
+  if (!id) {
+      return res.status(400).json({ message: 'User ID Required' })
+  }
+
+  // Does the user exist to delete?
+  const product = await Product.findById(id).exec()
+
+  if (!product) {
+      return res.status(400).json({ message: 'Product not found' })
+  }
+
+  const result = await product.deleteOne()
+
+  const reply = `Product ${result.username} with ID ${result._id} deleted`
+
+  res.json(reply)
+})
+
 export const updateDBOps = async (req, res) => {
   console.log(req.body);
   try {
@@ -210,3 +235,5 @@ export const updateDBOps = async (req, res) => {
 };
 
 export default router;
+
+

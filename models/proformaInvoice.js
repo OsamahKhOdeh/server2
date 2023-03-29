@@ -14,6 +14,8 @@ const productSchema = mongoose.Schema({
   stock: { type: Number },
   freezonePrice: { type: Number },
   LocalPrice: { type: Number },
+  LocalPriceAED : { type: Number},
+  freezonePriceAED : { type: Number},
   datasheet: { type: String },
   capacity: { type: String, required: true },
   image: [{ type: String }],
@@ -49,6 +51,12 @@ const proformaInvoiceSchema = mongoose.Schema({
   products: [productSchema],
   employee : { type: String },
   user : { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  status : {type : String , default : "Pending" },
+  location : {type : String, default : "freezone" },
+  currency : {type : String, default : "USD" },
+  phone_number : {type : String, default : "+971"},
+  note : {type : String, default : "No note"},
+  terms : [{type : String, default : ""}]
 },{
   timestamps: true
 });

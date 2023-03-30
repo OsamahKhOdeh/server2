@@ -57,7 +57,19 @@ export const getAllPIs = async (req, res) => {
   }
 };
 
-export default router;
+
+export const getEmployeePIs = async (req, res) => {
+  try {
+    const employee_name = req.query.employeename;
+    //const total = await Product.countDocuments({});
+    const proformaInvoices = await ProformaInvoice.find({employee : employee_name}).sort({createdAt : -1 });
+
+    res.json(proformaInvoices);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
+
 
 
 
@@ -66,7 +78,8 @@ export const updateProformaInvoiceStatus = async (req, res) => {
 
   const id = req.params.id;
   const newStatus = req.body.newStatus;
-  console.log("🚀 ~ file: proformaInvoice.js:62 ~ updateProformaInvoiceStatus ~ newStatus:", newStatus)
+  const managerMessage = req.body.managerMessage;
+  console.log("🚀"+ req.body.managerMessage)
   console.log(id);
  
   if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No ProformaInvoice with id: ${id}`);
@@ -76,10 +89,12 @@ export const updateProformaInvoiceStatus = async (req, res) => {
   return res.status(400).json({ message: 'ProformaInvoice not found' })
 }
  proforma.status = newStatus; 
+ proforma.managerMessage = managerMessage;
  const updatedProformaInvoice = await proforma.save()
 
  res.json({ message: `${updatedProformaInvoice._id} updated and set to ${updatedProformaInvoice.status}` })
 
 };
 
+export default router;
 

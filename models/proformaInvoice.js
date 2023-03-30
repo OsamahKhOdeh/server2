@@ -52,6 +52,7 @@ const proformaInvoiceSchema = mongoose.Schema({
   employee : { type: String },
   user : { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   status : {type : String , default : "Pending" },
+  managerMessage : { type: String , default : ""},
   location : {type : String, default : "freezone" },
   currency : {type : String, default : "USD" },
   phone_number : {type : String, default : "+971"},

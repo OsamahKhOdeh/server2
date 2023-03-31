@@ -49,7 +49,7 @@ export const getAllPIs = async (req, res) => {
   try {
 
     //const total = await Product.countDocuments({});
-    const proformaInvoices = await ProformaInvoice.find().sort({createdAt : -1 });
+    const proformaInvoices = await ProformaInvoice.find().sort({updatedAt : -1 });
 
     res.json(proformaInvoices);
   } catch (error) {
@@ -95,6 +95,27 @@ export const updateProformaInvoiceStatus = async (req, res) => {
  res.json({ message: `${updatedProformaInvoice._id} updated and set to ${updatedProformaInvoice.status}` })
 
 };
+
+
+
+export const updateProformaInvoice = async (req, res) => {
+  console.log("UPDATAEEEE");
+
+  const id = req.params.id;
+  console.log(id);
+  console.log(req.query);
+  console.log(req.body);
+
+  if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No pi with id: ${id}`);
+
+  const updatedProformaInvoice = req.body;
+  // const updatedPost = { creator, title, message, tags, selectedFile, _id: id };
+
+  const returnedUpdatedProformaInvoice = await ProformaInvoice.findByIdAndUpdate(id, updatedProformaInvoice, { new: true });
+
+  res.json(returnedUpdatedProformaInvoice);
+};
+
 
 export default router;
 

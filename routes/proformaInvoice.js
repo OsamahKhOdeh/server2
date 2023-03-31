@@ -1,5 +1,5 @@
 import express from "express";
-import { createProformaInvoice, getLastPiNo ,getAllPIs , updateProformaInvoiceStatus ,getEmployeePIs } from "../controllers/proformaInvoice.js";
+import { createProformaInvoice, getLastPiNo ,getAllPIs , updateProformaInvoiceStatus ,getEmployeePIs ,updateProformaInvoice } from "../controllers/proformaInvoice.js";
 import verifyJWT from "../middleware/verifyJWT.js";
 
 const router = express.Router();
@@ -12,5 +12,7 @@ router.get("/",getAllPIs)
 router.get("/employee", getEmployeePIs)
 
 router.patch('/:id', updateProformaInvoiceStatus);
+router.patch('/update/:id', updateProformaInvoice);
+
 
 export default router;

@@ -8,6 +8,7 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    phone : {type : String},
     roles: [{
         type: String,
         default: "Employee"

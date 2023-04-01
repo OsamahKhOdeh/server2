@@ -61,7 +61,7 @@ export const getAllPIs = async (req, res) => {
 export const getEmployeePIs = async (req, res) => {
   try {
     const employee_name = req.query.employeename;
-    //const total = await Product.countDocuments({});
+   console.log(employee_name);
     const proformaInvoices = await ProformaInvoice.find({employee : employee_name}).sort({createdAt : -1 });
 
     res.json(proformaInvoices);

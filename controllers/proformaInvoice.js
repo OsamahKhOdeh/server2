@@ -13,14 +13,17 @@ export const createProformaInvoice = async (req, res) => {
   const party_of_discharge = req.body.piInfo.partyOfDischarge;
   const final_distination = req.body.piInfo.finalDistination;
   const employee = req.body.piInfo.employee;
-  const phone_number = req.body.piInfo.phoneNumber;
+  const phone_number = req.body.piInfo.employeePhone;
   const note = req.body.piInfo.note;
   const notify_party = req.body.piInfo.notifyParty;
   const terms = req.body.piInfo.terms;
   const location = req.body.piInfo.location;
   const currency = req.body.piInfo.currency;
+  const bankDetails = req.body.piInfo.bankDetails;
+  console.log("🚀 ~ file: proformaInvoice.js:23 ~ createProformaInvoice ~ bankDetails:", bankDetails)
+  
   const { date, exporter, consignee, discount ,additions } = req.body.piInfo;
-  const pi = {notify_party ,terms,  phone_number,location,currency,note, employee , no, exporter, consignee, discount,additions, date, buyer_address, party_of_discharge, final_distination, products };
+  const pi = {notify_party ,terms,  phone_number , bankDetails ,location,currency,note, employee , no, exporter, consignee, discount,additions, date, buyer_address, party_of_discharge, final_distination, products  };
 
   const newProformaInvoice = new ProformaInvoice(pi);
 

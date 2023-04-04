@@ -1,5 +1,5 @@
 node_modules
 build
 logs
-/logs
+/logs/reqLog.log
 logs/

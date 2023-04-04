@@ -56,6 +56,7 @@ const proformaInvoiceSchema = mongoose.Schema({
   location : {type : String, default : "freezone" },
   currency : {type : String, default : "USD" },
   phone_number : {type : String, default : "+971"},
+  bankDetails : [{type : String, default : ""}],
   note : {type : String, default : "No note"},
   terms : [{type : String, default : ""}]
 },{

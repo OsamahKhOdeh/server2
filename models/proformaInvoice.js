@@ -58,7 +58,9 @@ const proformaInvoiceSchema = mongoose.Schema({
   phone_number : {type : String, default : "+971"},
   bankDetails : [{type : String, default : ""}],
   note : {type : String, default : "No note"},
-  terms : [{type : String, default : ""}]
+  terms : [{type : String, default : ""}],
+  paymentPercentage : {type : String, default : "30"},
+  manager : {type : String, default : ""},
 },{
   timestamps: true
 });

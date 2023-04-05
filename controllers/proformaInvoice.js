@@ -20,10 +20,11 @@ export const createProformaInvoice = async (req, res) => {
   const location = req.body.piInfo.location;
   const currency = req.body.piInfo.currency;
   const bankDetails = req.body.piInfo.bankDetails;
+  const paymentPercentage = req.body.piInfo.paymentPercentage;
   console.log("🚀 ~ file: proformaInvoice.js:23 ~ createProformaInvoice ~ bankDetails:", bankDetails)
   
   const { date, exporter, consignee, discount ,additions } = req.body.piInfo;
-  const pi = {notify_party ,terms,  phone_number , bankDetails ,location,currency,note, employee , no, exporter, consignee, discount,additions, date, buyer_address, party_of_discharge, final_distination, products  };
+  const pi = {notify_party ,terms,  phone_number , bankDetails ,location,currency,note, employee , no, exporter,paymentPercentage ,consignee, discount,additions, date, buyer_address, party_of_discharge, final_distination, products  };
 
   const newProformaInvoice = new ProformaInvoice(pi);
 
@@ -82,6 +83,7 @@ export const updateProformaInvoiceStatus = async (req, res) => {
   const id = req.params.id;
   const newStatus = req.body.newStatus;
   const managerMessage = req.body.managerMessage;
+  const manager = req.body.manager;
   console.log("🚀"+ req.body.managerMessage)
   console.log(id);
  
@@ -93,6 +95,7 @@ export const updateProformaInvoiceStatus = async (req, res) => {
 }
  proforma.status = newStatus; 
  proforma.managerMessage = managerMessage;
+ proforma.manager = manager;
  const updatedProformaInvoice = await proforma.save()
 
  res.json({ message: `${updatedProformaInvoice._id} updated and set to ${updatedProformaInvoice.status}` })

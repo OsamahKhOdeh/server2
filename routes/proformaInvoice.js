@@ -1,5 +1,6 @@
 import express from "express";
-import { createProformaInvoice, getLastPiNo ,getAllPIs , updateProformaInvoiceStatus ,getEmployeePIs ,updateProformaInvoice } from "../controllers/proformaInvoice.js";
+import multer from "multer";
+import { createProformaInvoice, getLastPiNo ,getAllPIs , updateProformaInvoiceStatus ,getEmployeePIs ,updateProformaInvoice, uploadSignedProformaInvoice, downloadSignedProformaInvoice } from "../controllers/proformaInvoice.js";
 import verifyJWT from "../middleware/verifyJWT.js";
 
 const router = express.Router();
@@ -13,6 +14,12 @@ router.get("/employee", getEmployeePIs)
 
 router.patch('/:id', updateProformaInvoiceStatus);
 router.patch('/update/:id', updateProformaInvoice);
+
+
+const upload = multer();
+
+router.post('/pisigned',upload.single('pdf') , uploadSignedProformaInvoice);
+router.get('/pisigned/:id',downloadSignedProformaInvoice);
 
 
 export default router;

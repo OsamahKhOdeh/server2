@@ -1,7 +1,9 @@
 import express from "express";
 import mongoose from "mongoose";
+import multer from "multer";
 
 import ProformaInvoice from "../models/proformaInvoice.js";
+import SignedPiPDF from '../models/pdfSchema.js'
 
 const router = express.Router();
 
@@ -94,7 +96,7 @@ export const updateProformaInvoiceStatus = async (req, res) => {
   return res.status(400).json({ message: 'ProformaInvoice not found' })
 }
  proforma.status = newStatus; 
- proforma.managerMessage = managerMessage;
+ proforma.managerMessage = managerMessage; 
  proforma.manager = manager;
  const updatedProformaInvoice = await proforma.save()
 
@@ -122,6 +124,38 @@ export const updateProformaInvoice = async (req, res) => {
   res.json(returnedUpdatedProformaInvoice);
 };
 
+
+
+
+export const uploadSignedProformaInvoice = async (req, res) => {
+  const pdf = new SignedPiPDF({
+    name: req.file.originalname,
+    data: req.file.buffer,
+    contentType: req.file.mimetype
+  });
+  pdf.save((err, pdf) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Error uploading PDF file');
+    } else {
+      res.send('PDF file uploaded successfully');
+    }
+  });
+}
+
+
+export const downloadSignedProformaInvoice = async (req, res) => {
+  SignedPiPDF.findOne({ _id: req.params.id }, (err, pdf) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Error finding PDF file');
+    } else {
+      res.setHeader('Content-Type', pdf.contentType);
+      res.setHeader('Content-Disposition', 'attachment; filename=' + pdf.name);
+      res.send(pdf.data);
+    }
+  });
+}
 
 export default router;
 

@@ -95,8 +95,10 @@ export const updateProformaInvoiceStatus = async (req, res) => {
  if (!proforma) {
   return res.status(400).json({ message: 'ProformaInvoice not found' })
 }
- proforma.status = newStatus; 
+ proforma.status = newStatus;
+ if(managerMessage) 
  proforma.managerMessage = managerMessage; 
+ if(manager)
  proforma.manager = manager;
  const updatedProformaInvoice = await proforma.save()
 
@@ -128,10 +130,22 @@ export const updateProformaInvoice = async (req, res) => {
 
 
 export const uploadSignedProformaInvoice = async (req, res) => {
+  console.log(req.file);
+
+  const piFileInfo = req.file.originalname.split('_');
+  const pi_no = piFileInfo[1];
+  const pi_employee = piFileInfo[2];
+  const pi_manager = piFileInfo[3];
+  const pi_id = piFileInfo[4];
+  console.log(pi_no , pi_employee , pi_manager , pi_id);
   const pdf = new SignedPiPDF({
     name: req.file.originalname,
     data: req.file.buffer,
-    contentType: req.file.mimetype
+    contentType: req.file.mimetype,
+    pi_id,
+    pi_no,
+    pi_manager,
+    pi_employee
   });
   pdf.save((err, pdf) => {
     if (err) {
@@ -145,7 +159,7 @@ export const uploadSignedProformaInvoice = async (req, res) => {
 
 
 export const downloadSignedProformaInvoice = async (req, res) => {
-  SignedPiPDF.findOne({ _id: req.params.id }, (err, pdf) => {
+  SignedPiPDF.findOne({ pi_id: req.params.id }, (err, pdf) => {
     if (err) {
       console.error(err);
       res.status(500).send('Error finding PDF file');

@@ -134,18 +134,20 @@ export const uploadSignedProformaInvoice = async (req, res) => {
 
   const piFileInfo = req.file.originalname.split('_');
   const pi_no = piFileInfo[1];
-  const pi_employee = piFileInfo[2];
-  const pi_manager = piFileInfo[3];
+  const employee = piFileInfo[2];
+  const manager = piFileInfo[3];
   const pi_id = piFileInfo[4];
-  console.log(pi_no , pi_employee , pi_manager , pi_id);
+  const buyer_address = piFileInfo[5];
+  console.log(pi_no , employee , manager , pi_id);
   const pdf = new SignedPiPDF({
     name: req.file.originalname,
     data: req.file.buffer,
     contentType: req.file.mimetype,
     pi_id,
     pi_no,
-    pi_manager,
-    pi_employee
+    manager,
+    employee,
+    buyer_address
   });
   pdf.save((err, pdf) => {
     if (err) {
@@ -170,6 +172,41 @@ export const downloadSignedProformaInvoice = async (req, res) => {
     }
   });
 }
+
+
+
+export const getAllSignedPIs = async (req, res) => {
+console.log("🚀 ~ file: proformaInvoice.js:177 ~ getAllSignedPIs ~ getAllSignedPIs:", "getAllSignedPIs")
+
+  
+  try {
+
+    //const total = await Product.countDocuments({});
+    const proformaInvoices = await SignedPiPDF.find({},{pi_id : 1 , pi_no : 1 , pi_employee : 1 , pi_manager : 1 , date : 1 , name : 1 , pi_current_status : 1 , pi_done_status : 1 , buyer_address : 1});
+    res.json(proformaInvoices);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
+
+
+
+
+
+export const getEmployeeSignedPIs = async (req, res) => {
+  const employee_name = req.params.employeename;
+  try {
+   console.log(employee_name);
+    const proformaInvoices = await SignedPiPDF.find({employee : employee_name},{pi_id : 1 , pi_no : 1 , employee : 1 , manager : 1 
+      , date : 1 , name : 1 , status : 1 , pi_done_status : 1 , buyer_address : 1 , createdAt : 1 , updatedAt : 1 }).sort({createdAt : -1});
+
+    res.json(proformaInvoices);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
+
+
 
 export default router;
 

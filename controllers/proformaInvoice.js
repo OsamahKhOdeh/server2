@@ -3,7 +3,8 @@ import mongoose from "mongoose";
 import multer from "multer";
 
 import ProformaInvoice from "../models/proformaInvoice.js";
-import SignedPiPDF from '../models/pdfSchema.js'
+import SignedPiPDF from "../models/pdfSchema.js";
+import { orderStatus } from "../config/piStatus.js";
 
 const router = express.Router();
 
@@ -23,10 +24,33 @@ export const createProformaInvoice = async (req, res) => {
   const currency = req.body.piInfo.currency;
   const bankDetails = req.body.piInfo.bankDetails;
   const paymentPercentage = req.body.piInfo.paymentPercentage;
-  console.log("🚀 ~ file: proformaInvoice.js:23 ~ createProformaInvoice ~ bankDetails:", bankDetails)
-  
-  const { date, exporter, consignee, discount ,additions } = req.body.piInfo;
-  const pi = {notify_party ,terms,  phone_number , bankDetails ,location,currency,note, employee , no, exporter,paymentPercentage ,consignee, discount,additions, date, buyer_address, party_of_discharge, final_distination, products  };
+  console.log(
+    "🚀 ~ file: proformaInvoice.js:23 ~ createProformaInvoice ~ bankDetails:",
+    bankDetails
+  );
+
+  const { date, exporter, consignee, discount, additions } = req.body.piInfo;
+  const pi = {
+    notify_party,
+    terms,
+    phone_number,
+    bankDetails,
+    location,
+    currency,
+    note,
+    employee,
+    no,
+    exporter,
+    paymentPercentage,
+    consignee,
+    discount,
+    additions,
+    date,
+    buyer_address,
+    party_of_discharge,
+    final_distination,
+    products,
+  };
 
   const newProformaInvoice = new ProformaInvoice(pi);
 
@@ -41,7 +65,9 @@ export const createProformaInvoice = async (req, res) => {
 
 export const getLastPiNo = async (req, res) => {
   try {
-    const lastNo = await ProformaInvoice.find({}, "exporter no").sort({ no: -1 }).limit(1);
+    const lastNo = await ProformaInvoice.find({}, "exporter no")
+      .sort({ no: -1 })
+      .limit(1);
     let no = lastNo[0].no;
     res.status(201).json(no);
     console.log(lastNo);
@@ -50,34 +76,32 @@ export const getLastPiNo = async (req, res) => {
   }
 };
 
-
 export const getAllPIs = async (req, res) => {
   try {
-
     //const total = await Product.countDocuments({});
-    const proformaInvoices = await ProformaInvoice.find().sort({updatedAt : -1 });
+    const proformaInvoices = await ProformaInvoice.find().sort({
+      updatedAt: -1,
+    });
 
     res.json(proformaInvoices);
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
 };
-
 
 export const getEmployeePIs = async (req, res) => {
   try {
     const employee_name = req.query.employeename;
-   console.log(employee_name);
-    const proformaInvoices = await ProformaInvoice.find({employee : employee_name}).sort({createdAt : -1 });
+    console.log(employee_name);
+    const proformaInvoices = await ProformaInvoice.find({
+      employee: employee_name,
+    }).sort({ createdAt: -1 });
 
     res.json(proformaInvoices);
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
 };
-
-
-
 
 export const updateProformaInvoiceStatus = async (req, res) => {
   console.log("UPDATAEEEE");
@@ -86,27 +110,25 @@ export const updateProformaInvoiceStatus = async (req, res) => {
   const newStatus = req.body.newStatus;
   const managerMessage = req.body.managerMessage;
   const manager = req.body.manager;
-  console.log("🚀"+ req.body.managerMessage)
+  console.log("🚀" + req.body.managerMessage);
   console.log(id);
- 
-  if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No ProformaInvoice with id: ${id}`);
- // Does the Proforma exist to update?
- const proforma = await ProformaInvoice.findById(id).exec()
- if (!proforma) {
-  return res.status(400).json({ message: 'ProformaInvoice not found' })
-}
- proforma.status = newStatus;
- if(managerMessage) 
- proforma.managerMessage = managerMessage; 
- if(manager)
- proforma.manager = manager;
- const updatedProformaInvoice = await proforma.save()
 
- res.json({ message: `${updatedProformaInvoice._id} updated and set to ${updatedProformaInvoice.status}` })
+  if (!mongoose.Types.ObjectId.isValid(id))
+    return res.status(404).send(`No ProformaInvoice with id: ${id}`);
+  // Does the Proforma exist to update?
+  const proforma = await ProformaInvoice.findById(id).exec();
+  if (!proforma) {
+    return res.status(400).json({ message: "ProformaInvoice not found" });
+  }
+  proforma.status = newStatus;
+  if (managerMessage) proforma.managerMessage = managerMessage;
+  if (manager) proforma.manager = manager;
+  const updatedProformaInvoice = await proforma.save();
 
+  res.json({
+    message: `${updatedProformaInvoice._id} updated and set to ${updatedProformaInvoice.status}`,
+  });
 };
-
-
 
 export const updateProformaInvoice = async (req, res) => {
   console.log("UPDATAEEEE");
@@ -116,29 +138,30 @@ export const updateProformaInvoice = async (req, res) => {
   console.log(req.query);
   console.log(req.body);
 
-  if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No pi with id: ${id}`);
+  if (!mongoose.Types.ObjectId.isValid(id))
+    return res.status(404).send(`No pi with id: ${id}`);
 
   const updatedProformaInvoice = req.body;
   // const updatedPost = { creator, title, message, tags, selectedFile, _id: id };
 
-  const returnedUpdatedProformaInvoice = await ProformaInvoice.findByIdAndUpdate(id, updatedProformaInvoice, { new: true });
+  const returnedUpdatedProformaInvoice =
+    await ProformaInvoice.findByIdAndUpdate(id, updatedProformaInvoice, {
+      new: true,
+    });
 
   res.json(returnedUpdatedProformaInvoice);
 };
 
-
-
-
 export const uploadSignedProformaInvoice = async (req, res) => {
   console.log(req.file);
 
-  const piFileInfo = req.file.originalname.split('_');
+  const piFileInfo = req.file.originalname.split("_");
   const pi_no = piFileInfo[1];
   const employee = piFileInfo[2];
   const manager = piFileInfo[3];
   const pi_id = piFileInfo[4];
   const buyer_address = piFileInfo[5];
-  console.log(pi_no , employee , manager , pi_id);
+  console.log(pi_no, employee, manager, pi_id);
   const pdf = new SignedPiPDF({
     name: req.file.originalname,
     data: req.file.buffer,
@@ -147,58 +170,82 @@ export const uploadSignedProformaInvoice = async (req, res) => {
     pi_no,
     manager,
     employee,
-    buyer_address
+    buyer_address,
   });
   pdf.save((err, pdf) => {
     if (err) {
       console.error(err);
-      res.status(500).send('Error uploading PDF file');
+      res.status(500).send("Error uploading PDF file");
     } else {
-      res.send('PDF file uploaded successfully');
+      res.send("PDF file uploaded successfully");
     }
   });
-}
-
+};
 
 export const downloadSignedProformaInvoice = async (req, res) => {
   SignedPiPDF.findOne({ pi_id: req.params.id }, (err, pdf) => {
     if (err) {
       console.error(err);
-      res.status(500).send('Error finding PDF file');
+      res.status(500).send("Error finding PDF file");
     } else {
-      res.setHeader('Content-Type', pdf.contentType);
-      res.setHeader('Content-Disposition', 'attachment; filename=' + pdf.name);
+      res.setHeader("Content-Type", pdf.contentType);
+      res.setHeader("Content-Disposition", "attachment; filename=" + pdf.name);
       res.send(pdf.data);
     }
   });
-}
-
-
+};
 
 export const getAllSignedPIs = async (req, res) => {
-console.log("🚀 ~ file: proformaInvoice.js:177 ~ getAllSignedPIs ~ getAllSignedPIs:", "getAllSignedPIs")
+  console.log(
+    "🚀 ~ file: proformaInvoice.js:177 ~ getAllSignedPIs ~ getAllSignedPIs:",
+    "getAllSignedPIs"
+  );
 
-  
   try {
-
     //const total = await Product.countDocuments({});
-    const proformaInvoices = await SignedPiPDF.find({},{pi_id : 1 , pi_no : 1 , pi_employee : 1 , pi_manager : 1 , date : 1 , name : 1 , pi_current_status : 1 , pi_done_status : 1 , buyer_address : 1});
+    const proformaInvoices = await SignedPiPDF.find(
+      {},
+      {
+        pi_id: 1,
+        pi_no: 1,
+        employee: 1,
+        manager: 1,
+        date: 1,
+        name: 1,
+        status: 1,
+        pi_done_status: 1,
+        buyer_address: 1,
+        createdAt: 1,
+        updatedAt: 1,
+        payments: 1,
+      }
+    ).sort({ createdAt: -1 });
     res.json(proformaInvoices);
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
 };
-
-
-
-
 
 export const getEmployeeSignedPIs = async (req, res) => {
   const employee_name = req.params.employeename;
   try {
-   console.log(employee_name);
-    const proformaInvoices = await SignedPiPDF.find({employee : employee_name},{pi_id : 1 , pi_no : 1 , employee : 1 , manager : 1 
-      , date : 1 , name : 1 , status : 1 , pi_done_status : 1 , buyer_address : 1 , createdAt : 1 , updatedAt : 1 }).sort({createdAt : -1});
+    console.log(employee_name);
+    const proformaInvoices = await SignedPiPDF.find(
+      { employee: employee_name },
+      {
+        pi_id: 1,
+        pi_no: 1,
+        employee: 1,
+        manager: 1,
+        date: 1,
+        name: 1,
+        status: 1,
+        pi_done_status: 1,
+        buyer_address: 1,
+        createdAt: 1,
+        updatedAt: 1,
+      }
+    ).sort({ createdAt: -1 });
 
     res.json(proformaInvoices);
   } catch (error) {
@@ -206,7 +253,54 @@ export const getEmployeeSignedPIs = async (req, res) => {
   }
 };
 
+export const updateSignedProformaInvoiceStatus = async (req, res) => {
+  console.log("");
+  const status = req.body.status;
+  const id = req.params.id;
+  console.log(id, status);
 
+  if (!mongoose.Types.ObjectId.isValid(id))
+    return res.status(404).send(`No ProformaInvoice with id: ${id}`);
+  // Does the Proforma exist to update?
+  const proforma = await SignedPiPDF.findOne({ pi_id: id }).exec();
+  if (!proforma) {
+    return res.status(400).json({ message: "ProformaInvoice not found" });
+  }
+
+  console.log(proforma.status);
+  const current_stage_no = orderStatus.filter(
+    (item) => item.status === proforma.status
+  )[0].stage_no;
+  console.log(current_stage_no);
+  const nextStage = orderStatus.filter(
+    (status) => status.stage_no === current_stage_no + 1
+  )[0].status;
+  console.log(nextStage);
+  proforma.status = nextStage;
+  proforma.pi_done_status.push(nextStage);
+  if (status) {
+    proforma.status = status;
+    proforma.pi_done_status.push(status);
+  }
+  const updatedProformaInvoice = await proforma.save();
+
+  res.json({
+    message: `${updatedProformaInvoice._id} updated and set to ${updatedProformaInvoice.status}`,
+  });
+};
+
+export const clear = async (req, res) => {
+  try {
+    const proformaInvoices = await SignedPiPDF.updateMany(
+      {},
+      { $set: { status: "CONFIRMED", pi_done_status: ["CONFIRMED"] } },
+      { upsert: false }
+    );
+
+    res.json("proformaInvoices");
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
 
 export default router;
-

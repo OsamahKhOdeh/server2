@@ -11,6 +11,7 @@ const pdfSchema = new mongoose.Schema({
   status : {type : String , default : "CONFIRMED"},
   pi_done_status : {type : [String] , default : ["CONFIRMED"]},
   buyer_address : {type : String},
+  payments : {type : [String] },
   date: {
     type: Date,
     default: Date.now

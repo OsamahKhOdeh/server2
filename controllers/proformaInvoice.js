@@ -24,10 +24,7 @@ export const createProformaInvoice = async (req, res) => {
   const currency = req.body.piInfo.currency;
   const bankDetails = req.body.piInfo.bankDetails;
   const paymentPercentage = req.body.piInfo.paymentPercentage;
-  console.log(
-    "🚀 ~ file: proformaInvoice.js:23 ~ createProformaInvoice ~ bankDetails:",
-    bankDetails
-  );
+  console.log("🚀 ~ file: proformaInvoice.js:23 ~ createProformaInvoice ~ bankDetails:", bankDetails);
 
   const { date, exporter, consignee, discount, additions } = req.body.piInfo;
   const pi = {
@@ -65,10 +62,8 @@ export const createProformaInvoice = async (req, res) => {
 
 export const getLastPiNo = async (req, res) => {
   try {
-    const lastNo = await ProformaInvoice.find({}, "exporter no")
-      .sort({ no: -1 })
-      .limit(1);
-    let no = lastNo[0].no;
+    const lastNo = await ProformaInvoice.find({}, "exporter pi_no").sort({ pi_no: -1 }).limit(1);
+    let no = lastNo[0].pi_no;
     res.status(201).json(no);
     console.log(lastNo);
   } catch (e) {
@@ -113,8 +108,7 @@ export const updateProformaInvoiceStatus = async (req, res) => {
   console.log("🚀" + req.body.managerMessage);
   console.log(id);
 
-  if (!mongoose.Types.ObjectId.isValid(id))
-    return res.status(404).send(`No ProformaInvoice with id: ${id}`);
+  if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No ProformaInvoice with id: ${id}`);
   // Does the Proforma exist to update?
   const proforma = await ProformaInvoice.findById(id).exec();
   if (!proforma) {
@@ -138,16 +132,14 @@ export const updateProformaInvoice = async (req, res) => {
   console.log(req.query);
   console.log(req.body);
 
-  if (!mongoose.Types.ObjectId.isValid(id))
-    return res.status(404).send(`No pi with id: ${id}`);
+  if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No pi with id: ${id}`);
 
   const updatedProformaInvoice = req.body;
   // const updatedPost = { creator, title, message, tags, selectedFile, _id: id };
 
-  const returnedUpdatedProformaInvoice =
-    await ProformaInvoice.findByIdAndUpdate(id, updatedProformaInvoice, {
-      new: true,
-    });
+  const returnedUpdatedProformaInvoice = await ProformaInvoice.findByIdAndUpdate(id, updatedProformaInvoice, {
+    new: true,
+  });
 
   res.json(returnedUpdatedProformaInvoice);
 };
@@ -196,10 +188,7 @@ export const downloadSignedProformaInvoice = async (req, res) => {
 };
 
 export const getAllSignedPIs = async (req, res) => {
-  console.log(
-    "🚀 ~ file: proformaInvoice.js:177 ~ getAllSignedPIs ~ getAllSignedPIs:",
-    "getAllSignedPIs"
-  );
+  console.log("🚀 ~ file: proformaInvoice.js:177 ~ getAllSignedPIs ~ getAllSignedPIs:", "getAllSignedPIs");
 
   try {
     //const total = await Product.countDocuments({});
@@ -259,8 +248,7 @@ export const updateSignedProformaInvoiceStatus = async (req, res) => {
   const id = req.params.id;
   console.log(id, status);
 
-  if (!mongoose.Types.ObjectId.isValid(id))
-    return res.status(404).send(`No ProformaInvoice with id: ${id}`);
+  if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No ProformaInvoice with id: ${id}`);
   // Does the Proforma exist to update?
   const proforma = await SignedPiPDF.findOne({ pi_id: id }).exec();
   if (!proforma) {
@@ -268,13 +256,9 @@ export const updateSignedProformaInvoiceStatus = async (req, res) => {
   }
 
   console.log(proforma.status);
-  const current_stage_no = orderStatus.filter(
-    (item) => item.status === proforma.status
-  )[0].stage_no;
+  const current_stage_no = orderStatus.filter((item) => item.status === proforma.status)[0].stage_no;
   console.log(current_stage_no);
-  const nextStage = orderStatus.filter(
-    (status) => status.stage_no === current_stage_no + 1
-  )[0].status;
+  const nextStage = orderStatus.filter((status) => status.stage_no === current_stage_no + 1)[0].status;
   console.log(nextStage);
   proforma.status = nextStage;
   proforma.pi_done_status.push(nextStage);

@@ -1,6 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
-import asyncHandler from 'express-async-handler'
+import asyncHandler from "express-async-handler";
 
 import Product from "../models/product.js";
 
@@ -57,15 +57,10 @@ export const createProduct = async (req, res) => {
 };
 
 export const getProducts = async (req, res) => {
-  const { page } = req.query;
   try {
-    const LIMIT = 20;
-    const startIndex = (Number(page) - 1) * LIMIT;
+    const products = await Product.find().sort({ _id: -1 });
 
-    const total = await Product.countDocuments({});
-    const products = await Product.find().sort({ _id: -1 }).limit(LIMIT).skip(startIndex);
-
-    res.json({ data: products, currentPage: Number(page), numberOfPages: Math.ceil(total / LIMIT) });
+    res.json({ data: products });
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
@@ -200,34 +195,36 @@ export const updateProduct = async (req, res) => {
   res.json(updatedProduct);
 };
 
-
-
-
 export const deleteProduct = asyncHandler(async (req, res) => {
   const id = req.params.id;
   // Confirm data
   if (!id) {
-      return res.status(400).json({ message: 'User ID Required' })
+    return res.status(400).json({ message: "User ID Required" });
   }
 
   // Does the user exist to delete?
-  const product = await Product.findById(id).exec()
+  const product = await Product.findById(id).exec();
 
   if (!product) {
-      return res.status(400).json({ message: 'Product not found' })
+    return res.status(400).json({ message: "Product not found" });
   }
 
-  const result = await product.deleteOne()
+  const result = await product.deleteOne();
 
-  const reply = `Product ${result.username} with ID ${result._id} deleted`
+  const reply = `Product ${result.username} with ID ${result._id} deleted`;
 
-  res.json(reply)
-})
+  res.json(reply);
+});
 
 export const updateDBOps = async (req, res) => {
   console.log(req.body);
   try {
-    Product.updateMany({}, { $set: { images: ["https://res.cloudinary.com/dwen6dx2a/image/upload/v1676527391/vhk7vmtc0dtguqoyvc7a.png"] } }, false, true);
+    Product.updateMany(
+      {},
+      { $set: { images: ["https://res.cloudinary.com/dwen6dx2a/image/upload/v1676527391/vhk7vmtc0dtguqoyvc7a.png"] } },
+      false,
+      true
+    );
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
@@ -235,5 +232,3 @@ export const updateDBOps = async (req, res) => {
 };
 
 export default router;
-
-

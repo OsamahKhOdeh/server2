@@ -28,7 +28,7 @@ const productSchema = mongoose.Schema(
         warehouse: { type: String },
         serialNumbers: [{ type: String }],
         blStatus: { type: String },
-        bookQty: { type: Number },
+        bookedQty: { type: Number },
       },
     ],
   },

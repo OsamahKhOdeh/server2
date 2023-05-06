@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import Inc from "mongoose-sequence";
-const AutoIncrement = Inc(mongoose); 
 
+const AutoIncrement = Inc(mongoose);
 
 const productSchema = mongoose.Schema({
   category: { type: String, required: true },
@@ -14,8 +14,8 @@ const productSchema = mongoose.Schema({
   stock: { type: Number },
   freezonePrice: { type: Number },
   LocalPrice: { type: Number },
-  LocalPriceAED : { type: Number},
-  freezonePriceAED : { type: Number},
+  LocalPriceAED: { type: Number },
+  freezonePriceAED: { type: Number },
   datasheet: { type: String },
   capacity: { type: String, required: true },
   image: [{ type: String }],
@@ -37,42 +37,44 @@ const productSchema = mongoose.Schema({
   ],
 });
 
-const proformaInvoiceSchema = mongoose.Schema({
-  no: { type: Number, index: true },
-  date: { type: Date },
-  exporter: { type: String },
-  notify_party: { type: String },
-  buyer_address: { type: String },
-  consignee: { type: String },
-  party_of_discharge: { type: String },
-  final_distination: { type: String },
-  additions : {type : Number},
-  discount: { type: Number },
-  products: [productSchema],
-  employee : { type: String },
-  user : { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-  status : {type : String , default : "Pending" },
-  managerMessage : { type: String , default : ""},
-  location : {type : String, default : "freezone" },
-  currency : {type : String, default : "USD" },
-  phone_number : {type : String, default : "+971"},
-  bankDetails : [{type : String, default : ""}],
-  note : {type : String, default : "No note"},
-  terms : [{type : String, default : ""}],
-  paymentPercentage : {type : String, default : "30"},
-  manager : {type : String, default : ""},
-},{
-  timestamps: true
-});
- 
+const proformaInvoiceSchema = mongoose.Schema(
+  {
+    no: { type: Number, index: true },
+    date: { type: Date },
+    exporter: { type: String },
+    notify_party: { type: String },
+    buyer_address: { type: String },
+    consignee: { type: String },
+    party_of_discharge: { type: String },
+    final_distination: { type: String },
+    additions: { type: Number },
+    discount: { type: Number },
+    products: [productSchema],
+    employee: { type: String },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    status: { type: String, default: "Pending" },
+    managerMessage: { type: String, default: "" },
+    location: { type: String, default: "freezone" },
+    currency: { type: String, default: "USD" },
+    phone_number: { type: String, default: "+971" },
+    bankDetails: [{ type: String, default: "" }],
+    note: { type: String, default: "No note" },
+    terms: [{ type: String, default: "" }],
+    paymentPercentage: { type: String, default: "30" },
+    deliveryDate: { type: String, default: "7" },
+    manager: { type: String, default: "" },
+  },
+  {
+    timestamps: true,
+  }
+);
+
 proformaInvoiceSchema.plugin(AutoIncrement, {
-  inc_field: 'pi_no',
-  id: 'piNums',
-  start_seq: 40000
+  inc_field: "pi_no",
+  id: "piNums",
+  start_seq: 40000,
 });
 
 var ProformaInvoice = mongoose.model("ProformaInvoice", proformaInvoiceSchema);
-
-
 
 export default ProformaInvoice;

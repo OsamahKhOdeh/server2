@@ -9,6 +9,8 @@ import proformaInvoiceRoutes from "./routes/proformaInvoice.js";
 import userRoutes from "./routes/userRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import projectRoutes from "./routes/projectRoutes.js";
+import poInfoRoutes from "./routes/poInfoRoutes.js";
+import purchaseOrderRoutes from "./routes/purchaseOrderRoutes.js";
 import morgan from "morgan";
 import { morganLogger } from "./utils/logger.js";
 import { logger } from "./middleware/logger.js";
@@ -46,6 +48,8 @@ app.use("/pi", proformaInvoiceRoutes);
 app.use("/users", userRoutes);
 app.use("/auth", authRoutes);
 app.use("/projects", projectRoutes);
+app.use("/poinfo", poInfoRoutes);
+app.use("/purchaseorder", purchaseOrderRoutes);
 
 app.get("/", (req, res) => {
   res.send("App is running");

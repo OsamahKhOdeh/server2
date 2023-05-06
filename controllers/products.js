@@ -58,6 +58,15 @@ export const createProduct = async (req, res) => {
 
 export const getProducts = async (req, res) => {
   try {
+    {
+      /*await Product.updateMany({}, { $set: { lastUpdateBy: "" } }, function (err, result) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(result);
+      }
+    });*/
+    }
     const products = await Product.find().sort({ _id: -1 });
 
     res.json({ data: products });
@@ -177,11 +186,34 @@ export const getProductsBySearch = async (req, res) => {
   }
 };
 
-export const updateProduct = async (req, res) => {
-  console.log("UPDATAEEEE");
-
+export const updateProductStock = async (req, res) => {
   const id = req.params.id;
+  const newVal = req.body.value;
+  const property = req.body.property;
+  const employee = req.body.employee;
+  const update = {};
+  update[property] = newVal;
+  update["lastUpdateBy"] = employee;
+
   console.log(id);
+  console.log(update);
+
+  if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No product with id: ${id}`);
+
+  const updatedProduct = await Product.findOneAndUpdate({ _id: id }, { $set: update }, function (err, result) {
+    if (err) {
+      res.status(404).json({ message: err.message });
+
+      console.log(err);
+    } else {
+      console.log("Stock Update Success");
+      res.json(`product with id ${id} updated successfully`);
+    }
+  });
+};
+
+export const updateProduct = async (req, res) => {
+  const id = req.params.id;
   console.log(req.query);
   console.log(req.body);
 

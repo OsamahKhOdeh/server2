@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import multer from "multer";
+import asyncHandler from "express-async-handler";
 
 import ProformaInvoice from "../models/proformaInvoice.js";
 import SignedPiPDF from "../models/pdfSchema.js";
@@ -24,6 +25,8 @@ export const createProformaInvoice = async (req, res) => {
   const currency = req.body.piInfo.currency;
   const bankDetails = req.body.piInfo.bankDetails;
   const paymentPercentage = req.body.piInfo.paymentPercentage;
+  const deliveryDate = req.body.piInfo.deliveryDate;
+
   console.log("🚀 ~ file: proformaInvoice.js:23 ~ createProformaInvoice ~ bankDetails:", bankDetails);
 
   const { date, exporter, consignee, discount, additions } = req.body.piInfo;
@@ -39,6 +42,7 @@ export const createProformaInvoice = async (req, res) => {
     no,
     exporter,
     paymentPercentage,
+    deliveryDate,
     consignee,
     discount,
     additions,
@@ -59,6 +63,30 @@ export const createProformaInvoice = async (req, res) => {
     res.status(409).json({ message: error.message });
   }
 };
+
+// @desc Delete a PI
+// @route DELETE /pi
+// @access Private
+export const deleteProformaInvoice = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+  // Confirm data
+  if (!id) {
+    return res.status(400).json({ message: " ID Required" });
+  }
+
+  // Does the user exist to delete?
+  const pi = await ProformaInvoice.findById(id).exec();
+
+  if (!pi) {
+    return res.status(400).json({ message: "PI not found" });
+  }
+
+  const result = await pi.deleteOne();
+
+  const reply = `Pi ${result} with ID ${result._id} deleted`;
+
+  res.json(reply);
+});
 
 export const getLastPiNo = async (req, res) => {
   try {

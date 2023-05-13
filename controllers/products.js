@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import asyncHandler from "express-async-handler";
 
 import Product from "../models/product.js";
+import ProformaInvoice from "../models/proformaInvoice.js";
 
 const router = express.Router();
 const con = {
@@ -261,6 +262,193 @@ export const updateDBOps = async (req, res) => {
     res.status(404).json({ message: error.message });
   }
   res.json("Updated");
+};
+
+export const updateStock = async (req, res) => {
+  const id = req.params.id;
+  const { code, qty, date, warehouse, status, booked } = req.body;
+  console.log({ code, qty, date, warehouse, status, booked });
+
+  if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No product with id: ${id}`);
+  try {
+    const product = await Product.findOne({ _id: id });
+    if (product) {
+      product.bl.push({ code, qty, date, warehouse, status, booked });
+      try {
+        await product.save();
+        res.header("Access-Control-Allow-Origin", "*");
+        res.status(201).json(product.bl);
+      } catch (error) {
+        res.status(409).json({ message: error.message });
+      }
+    }
+  } catch (err) {}
+};
+
+export const updateProductWarehouseBlQty = async (req, res) => {
+  const id = req.params.id;
+  const { code, qty, date, warehouse, booked } = req.body;
+
+  console.log({ code, qty, date, warehouse, booked });
+
+  if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No product with id: ${id}`);
+  try {
+    const product = await Product.findOne({ _id: id });
+    if (product) {
+      console.log(product.bl);
+
+      const item_index = product.bl.findIndex((obj) => obj.warehouse === warehouse && obj.code === code);
+      console.log(item_index);
+      product.bl[item_index].qty = qty;
+      product.bl[item_index].date = date;
+      product.bl[item_index].booked = booked;
+      try {
+        product.markModified("bl");
+        await product.save();
+        res.header("Access-Control-Allow-Origin", "*");
+        res.status(201).json(product.bl);
+      } catch (err) {
+        res.status(409).json({ message: err });
+      }
+    }
+  } catch (err) {
+    res.status(409).json({ message: err });
+  }
+};
+
+export const updateProductWarehouseBlBookedQty = async (req, res) => {
+  const id = req.params.id;
+  console.log(req.body);
+  const { qty, warehouse, code } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No product with id: ${id}`);
+  try {
+    const product = await Product.findOne({ _id: id });
+    if (product) {
+      const item_index = product.bl.findIndex((obj) => obj.warehouse === warehouse && obj.code === code);
+      product.bl[item_index].booked = qty;
+
+      try {
+        product.markModified("bl");
+        await product.save();
+        res.header("Access-Control-Allow-Origin", "*");
+        res.status(201).json(product.bl);
+      } catch (err) {
+        res.status(409).json({ message: err });
+      }
+    }
+  } catch (err) {
+    res.status(409).json({ message: err });
+  }
+};
+
+export const updateProductMoveToAvailable = async (req, res) => {
+  const id = req.params.id;
+  console.log(req.body);
+  const { date, warehouse, code } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No product with id: ${id}`);
+  try {
+    const product = await Product.findOne({ _id: id });
+    if (product) {
+      const item_index = product.bl.findIndex((obj) => obj.warehouse === "coming" && obj.code === code);
+      product.bl[item_index].warehouse = warehouse;
+      product.bl[item_index].date = date;
+
+      try {
+        product.markModified("bl");
+        await product.save();
+        res.header("Access-Control-Allow-Origin", "*");
+        res.status(201).json(product.bl);
+      } catch (err) {
+        res.status(409).json({ message: err });
+      }
+    }
+  } catch (err) {
+    res.status(409).json({ message: err });
+  }
+};
+
+export const updateProductMoveToComing = async (req, res) => {
+  const id = req.params.id;
+  console.log(req.body);
+  const { date, warehouse, code, qty } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No product with id: ${id}`);
+  try {
+    const product = await Product.findOne({ _id: id });
+    if (product) {
+      const item_index = product.bl.findIndex((obj) => obj.warehouse === "production" && obj.qty === qty);
+      product.bl[item_index].warehouse = "coming";
+      product.bl[item_index].date = date;
+      product.bl[item_index].code = code;
+
+      try {
+        product.markModified("bl");
+        await product.save();
+        res.header("Access-Control-Allow-Origin", "*");
+        res.status(201).json(product.bl);
+      } catch (err) {
+        res.status(409).json({ message: err });
+      }
+    }
+  } catch (err) {
+    res.status(409).json({ message: err });
+  }
+};
+
+export const bookPiProducts = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const proformaInvoice = await ProformaInvoice.findById(id);
+    const products = proformaInvoice.products;
+    let productsToUpdate = [];
+    products.map((product) => {
+      productsToUpdate.push({ id: product._id, qty: product.qty });
+    });
+    productsToUpdate.map((product) => {
+      bookProduct(product.id, product.qty);
+    });
+
+    res.json(productsToUpdate);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
+
+const bookProduct = async (id, qty) => {
+  try {
+    const product = await Product.findOne({ _id: id });
+    if (product) {
+      const stockBl = product.bl.filter((bl) => bl.warehouse !== "coming" && bl.warehouse !== "production");
+
+      const sortedBl = stockBl.sort((a, b) => new Date(a.date) - new Date(b.date));
+      for (let i = 0; i < sortedBl.length; i++) {
+        const currentObject = sortedBl[i];
+
+        // Decrease the quantity from the current object
+        if (qty >= currentObject.qty - currentObject.booked) {
+          qty -= currentObject.qty - currentObject.booked;
+          currentObject.booked = currentObject.qty;
+        } else {
+          currentObject.booked += qty;
+          qty = 0;
+          break; // Exit the loop since the quantity has been fully decreased
+        }
+      }
+      //const item_index = product.bl.findIndex((obj) => obj.warehouse === warehouse && obj.code === code);
+      // product.bl[0].booked += qty;
+      console.log(product.bl);
+      try {
+        product.markModified("bl");
+        await product.save();
+      } catch (err) {}
+      // product.save();
+    }
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 export default router;

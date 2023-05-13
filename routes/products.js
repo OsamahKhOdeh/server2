@@ -9,6 +9,12 @@ import {
   updateDBOps,
   deleteProduct,
   updateProductStock,
+  updateStock,
+  updateProductWarehouseBlQty,
+  updateProductWarehouseBlBookedQty,
+  updateProductMoveToAvailable,
+  updateProductMoveToComing,
+  bookPiProducts,
 } from "../controllers/products.js";
 
 const router = express.Router();
@@ -23,6 +29,13 @@ router.get("/", getProducts);
 router.post("/", createProduct);
 router.patch("/:id", updateProduct);
 router.patch("/stock/:id", updateProductStock);
+router.patch("/stockall/:id", updateStock);
+router.patch("/productqty/:id", updateProductWarehouseBlQty);
+router.patch("/productbookedqty/:id", updateProductWarehouseBlBookedQty);
+router.patch("/productmoveavailable/:id", updateProductMoveToAvailable);
+router.patch("/productmovecoming/:id", updateProductMoveToComing);
+router.patch("/bookpiproducts/:id", bookPiProducts);
+
 router.delete("/:id", deleteProduct);
 //router.patch("/update", updateDBOps);
 

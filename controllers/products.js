@@ -4,6 +4,7 @@ import asyncHandler from "express-async-handler";
 
 import Product from "../models/product.js";
 import ProformaInvoice from "../models/proformaInvoice.js";
+import SignedPiPDF from "../models/pdfSchema.js";
 
 const router = express.Router();
 const con = {
@@ -59,15 +60,14 @@ export const createProduct = async (req, res) => {
 
 export const getProducts = async (req, res) => {
   try {
-    {
-      /*await Product.updateMany({}, { $set: { lastUpdateBy: "" } }, function (err, result) {
+    /* await Product.updateMany({}, { $set: { stockAll: [] } }, function (err, result) {
       if (err) {
         console.log(err);
       } else {
         console.log(result);
       }
-    });*/
-    }
+    });
+*/
     const products = await Product.find().sort({ _id: -1 });
 
     res.json({ data: products });
@@ -410,6 +410,13 @@ export const bookPiProducts = async (req, res) => {
     productsToUpdate.map((product) => {
       bookProduct(product.id, product.qty);
     });
+    const proforma = await SignedPiPDF.findOne({ pi_id: id }).exec();
+    if (!proforma) {
+      console.log("ProformaInvoice not found");
+    }
+    proforma.status = "BOOKED";
+    proforma.pi_done_status.push("BOOKED");
+    const updatedProformaInvoice = await proforma.save();
 
     res.json(productsToUpdate);
   } catch (error) {
@@ -434,12 +441,13 @@ const bookProduct = async (id, qty) => {
         } else {
           currentObject.booked += qty;
           qty = 0;
-          break; // Exit the loop since the quantity has been fully decreased
+          break;
+          // Exit the loop since the quantity has been fully decreased
         }
       }
       //const item_index = product.bl.findIndex((obj) => obj.warehouse === warehouse && obj.code === code);
       // product.bl[0].booked += qty;
-      console.log(product.bl);
+      //  console.log(product.bl);
       try {
         product.markModified("bl");
         await product.save();

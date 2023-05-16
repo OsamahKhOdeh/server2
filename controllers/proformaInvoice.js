@@ -133,7 +133,13 @@ export const updateProformaInvoiceStatus = async (req, res) => {
   const newStatus = req.body.newStatus;
   const managerMessage = req.body.managerMessage;
   const manager = req.body.manager;
-  console.log("🚀" + req.body.managerMessage);
+  const finance = req.body.finance;
+  const financeMessage = req.body.financeMessage;
+
+  const managerApproval = req.body.managerApproval;
+  const financiaApproval = req.body.financiaApproval;
+
+  console.log("🚀" + req.body.financiaApproval);
   console.log(id);
 
   if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No ProformaInvoice with id: ${id}`);
@@ -145,6 +151,15 @@ export const updateProformaInvoiceStatus = async (req, res) => {
   proforma.status = newStatus;
   if (managerMessage) proforma.managerMessage = managerMessage;
   if (manager) proforma.manager = manager;
+  if (managerApproval !== undefined) proforma.managerApproval = managerApproval;
+  if (financiaApproval !== undefined) proforma.financiaApproval = financiaApproval;
+  if (financeMessage) {
+    proforma.financeMessage = financeMessage;
+  }
+  if (finance) {
+    proforma.finance = finance;
+  }
+
   const updatedProformaInvoice = await proforma.save();
 
   res.json({
@@ -192,11 +207,17 @@ export const uploadSignedProformaInvoice = async (req, res) => {
     employee,
     buyer_address,
   });
-  pdf.save((err, pdf) => {
+  pdf.save(async (err, pdf) => {
     if (err) {
       console.error(err);
       res.status(500).send("Error uploading PDF file");
     } else {
+      const proforma = await ProformaInvoice.findById(pi_id).exec();
+      if (!proforma) {
+        return res.status(400).json({ message: "ProformaInvoice not found" });
+      }
+      proforma.status = "Signed";
+      const updatedProformaInvoice = await proforma.save();
       res.send("PDF file uploaded successfully");
     }
   });

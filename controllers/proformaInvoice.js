@@ -256,6 +256,7 @@ export const getAllSignedPIs = async (req, res) => {
         createdAt: 1,
         updatedAt: 1,
         payments: 1,
+        booked: 1,
       }
     ).sort({ createdAt: -1 });
     res.json(proformaInvoices);
@@ -282,6 +283,7 @@ export const getEmployeeSignedPIs = async (req, res) => {
         buyer_address: 1,
         createdAt: 1,
         updatedAt: 1,
+        booked: 1,
       }
     ).sort({ createdAt: -1 });
 

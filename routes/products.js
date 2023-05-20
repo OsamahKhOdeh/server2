@@ -15,6 +15,7 @@ import {
   updateProductMoveToAvailable,
   updateProductMoveToComing,
   bookPiProducts,
+  unbookPiProducts,
 } from "../controllers/products.js";
 
 const router = express.Router();
@@ -35,6 +36,7 @@ router.patch("/productbookedqty/:id", updateProductWarehouseBlBookedQty);
 router.patch("/productmoveavailable/:id", updateProductMoveToAvailable);
 router.patch("/productmovecoming/:id", updateProductMoveToComing);
 router.patch("/bookpiproducts/:id", bookPiProducts);
+router.patch("/unbookpiproducts/:id", unbookPiProducts);
 
 router.delete("/:id", deleteProduct);
 //router.patch("/update", updateDBOps);

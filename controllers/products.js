@@ -267,6 +267,7 @@ export const updateDBOps = async (req, res) => {
 export const updateStock = async (req, res) => {
   const id = req.params.id;
   const { code, qty, date, warehouse, status, booked } = req.body;
+
   console.log({ code, qty, date, warehouse, status, booked });
 
   if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No product with id: ${id}`);
@@ -399,6 +400,8 @@ export const updateProductMoveToComing = async (req, res) => {
 
 export const bookPiProducts = async (req, res) => {
   const id = req.params.id;
+  console.log();
+  const booked = [];
 
   try {
     const proformaInvoice = await ProformaInvoice.findById(id);
@@ -407,8 +410,9 @@ export const bookPiProducts = async (req, res) => {
     products.map((product) => {
       productsToUpdate.push({ id: product._id, qty: product.qty });
     });
-    productsToUpdate.map((product) => {
-      bookProduct(product.id, product.qty);
+    productsToUpdate.map(async (product) => {
+      const bookedItem = await bookProduct(product.id, product.qty);
+      booked.push(bookedItem);
     });
     const proforma = await SignedPiPDF.findOne({ pi_id: id }).exec();
     if (!proforma) {
@@ -416,6 +420,7 @@ export const bookPiProducts = async (req, res) => {
     }
     proforma.status = "BOOKED";
     proforma.pi_done_status.push("BOOKED");
+    proforma.booked = booked;
     const updatedProformaInvoice = await proforma.save();
 
     res.json(productsToUpdate);
@@ -425,11 +430,11 @@ export const bookPiProducts = async (req, res) => {
 };
 
 const bookProduct = async (id, qty) => {
+  let booked = { productId: id, bookedQty: [] };
   try {
     const product = await Product.findOne({ _id: id });
     if (product) {
       const stockBl = product.bl.filter((bl) => bl.warehouse !== "coming" && bl.warehouse !== "production");
-
       const sortedBl = stockBl.sort((a, b) => new Date(a.date) - new Date(b.date));
       for (let i = 0; i < sortedBl.length; i++) {
         const currentObject = sortedBl[i];
@@ -437,9 +442,20 @@ const bookProduct = async (id, qty) => {
         // Decrease the quantity from the current object
         if (qty >= currentObject.qty - currentObject.booked) {
           qty -= currentObject.qty - currentObject.booked;
+          booked.bookedQty.push({
+            warehouse: currentObject.warehouse,
+            code: currentObject.code,
+            qty: currentObject.qty - currentObject.booked,
+          });
           currentObject.booked = currentObject.qty;
         } else {
           currentObject.booked += qty;
+          booked.bookedQty.push({
+            warehouse: currentObject.warehouse,
+            code: currentObject.code,
+            qty: qty,
+          });
+
           qty = 0;
           break;
           // Exit the loop since the quantity has been fully decreased
@@ -457,6 +473,63 @@ const bookProduct = async (id, qty) => {
   } catch (err) {
     console.log(err);
   }
+
+  return booked;
+};
+
+export const unbookPiProducts = async (req, res) => {
+  const id = req.params.id;
+  console.log(id);
+  const booked = [];
+
+  try {
+    const proforma = await SignedPiPDF.findOne({ pi_id: id }).exec();
+    if (!proforma) {
+      console.log("ProformaInvoice not found");
+    }
+    const productsToUnbook = proforma.booked;
+    console.log(productsToUnbook);
+    productsToUnbook.map((item) => {
+      unBookProduct(item.productId, item.bookedQty);
+    });
+
+    proforma.status = "CONFIRMED";
+    proforma.pi_done_status = proforma.pi_done_status.filter((status) => status !== "BOOKED");
+    proforma.booked = [];
+    const updatedProformaInvoice = await proforma.save();
+
+    res.json(updatedProformaInvoice);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
+
+const unBookProduct = async (id, qtys) => {
+  let booked = { productId: id, bookedQty: [] };
+  try {
+    const product = await Product.findOne({ _id: id });
+    if (product) {
+      //    const stockBl = product.bl.filter((bl) => bl.warehouse !== "coming" && bl.warehouse !== "production");
+
+      qtys.map((item) => {
+        const blIndex = product.bl.findIndex((obj) => obj.warehouse === item.warehouse && obj.code === item.code);
+        product.bl[blIndex].booked -= item.qty;
+      });
+
+      //const item_index = product.bl.findIndex((obj) => obj.warehouse === warehouse && obj.code === code);
+      // product.bl[0].booked += qty;
+      //  console.log(product.bl);
+      try {
+        product.markModified("bl");
+        await product.save();
+      } catch (err) {}
+      // product.save();
+    }
+  } catch (err) {
+    console.log(err);
+  }
+
+  return booked;
 };
 
 export default router;

@@ -11,6 +11,8 @@ import authRoutes from "./routes/authRoutes.js";
 import projectRoutes from "./routes/projectRoutes.js";
 import poInfoRoutes from "./routes/poInfoRoutes.js";
 import purchaseOrderRoutes from "./routes/purchaseOrderRoutes.js";
+import stockRoutes from "./routes/stockRoutes.js";
+
 import morgan from "morgan";
 import { morganLogger } from "./utils/logger.js";
 import { logger } from "./middleware/logger.js";
@@ -50,6 +52,7 @@ app.use("/auth", authRoutes);
 app.use("/projects", projectRoutes);
 app.use("/poinfo", poInfoRoutes);
 app.use("/purchaseorder", purchaseOrderRoutes);
+app.use("/stock", stockRoutes);
 
 app.get("/", (req, res) => {
   res.send("App is running");

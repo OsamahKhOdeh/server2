@@ -5,7 +5,10 @@ import asyncHandler from "express-async-handler";
 
 import StockItem from "../../models/Stock/StockItem.js";
 import ProformaInvoice from "../../models/proformaInvoice.js";
+import SignedPiPDF from "../../models/pdfSchema.js";
+
 import Product from "../../models/product.js";
+import PackingList from "../../models/PackingList/PackingList.js";
 
 const router = express.Router();
 /* -------------------------------------------------------------------------- */
@@ -19,7 +22,6 @@ export const addStockItem = async (req, res) => {
     return res.status(400).json({ message: "All fields are required" });
   }
   const stockItemObject = { productId, bl: code, qty, date, warehouse, productCode, productBrand, productCapacity };
-  console.log({ code, qty, date, warehouse });
 
   // Create and store new user
 
@@ -41,37 +43,36 @@ export const addStockItem = async (req, res) => {
 
 export const bookPiProducts = async (req, res) => {
   const id = req.params.id;
-  console.log();
-  const booked = [];
+  console.log(id);
 
-  try {
-    const proformaInvoice = await ProformaInvoice.findById(id);
-    const products = proformaInvoice.products;
-    let productsToUpdate = [];
-    products.map((product) => {
-      productsToUpdate.push({ id: product._id, qty: product.qty });
-    });
-    console.log(",,,,,,,,,");
-    console.log(productsToUpdate);
-    console.log("..........");
+  const proformaInvoice = await ProformaInvoice.findById(id);
+  const proforma = await SignedPiPDF.findOne({ pi_id: id }).exec();
+  if (!proforma || !proformaInvoice) {
+    return res.status(400).json({ message: "Wrong pi Number" });
+  }
+  console.log("pi and signed found");
+  const products = proformaInvoice.products;
+  let productsToUpdate = [];
+  let booked = [];
+  products.map((product) => {
+    productsToUpdate.push({ id: product._id, qty: product.qty });
+  });
+  await Promise.all(
     productsToUpdate.map(async (product) => {
       const bookedItem = await bookProduct(product.id, product.qty);
+      console.log("...........");
       console.log(bookedItem);
-      booked.push(bookedItem);
-    });
-    const proforma = await SignedPiPDF.findOne({ pi_id: id }).exec();
-    if (!proforma) {
-      console.log("ProformaInvoice not found");
-    }
-    proforma.status = "BOOKED";
-    proforma.pi_done_status.push("BOOKED");
-    proforma.booked = booked;
-    const updatedProformaInvoice = await proforma.save();
+      console.log("...........");
+      proforma.booked.push(bookedItem);
+    })
+  );
+  // console.log(booked);
 
-    res.json(productsToUpdate);
-  } catch (error) {
-    res.status(404).json({ message: error.message });
-  }
+  proforma.status = "BOOKED";
+  proforma.pi_done_status.push("BOOKED");
+  //  proforma.booked = booked;
+  console.log(booked);
+  const updatedProformaInvoice = await proforma.save();
 };
 
 const bookProduct = async (id, qty) => {
@@ -98,7 +99,6 @@ const bookProduct = async (id, qty) => {
           code: currentObject.bl,
           qty: bookedFromItem,
         });
-        console.log(currentObject.bl + " " + currentObject.booked);
       } else {
         let bookedFromItem = qty;
 
@@ -111,7 +111,6 @@ const bookProduct = async (id, qty) => {
           code: currentObject.bl,
           qty: bookedFromItem,
         });
-        console.log(currentObject.bl + " " + currentObject.booked);
         break;
         // Exit the loop since the quantity has been fully decrease
       }
@@ -144,12 +143,10 @@ export const getStock = async (req, res) => {
     let productComingBookedQty = 0;
     let productUnderProductionQty = 0;
 
-    console.log(product._id);
-
     const productStockItems = stockItems.filter((stockItem) => stockItem.productId.includes(product._id));
     const productWarehouseQuantities = productStockItems.reduce((accumulator, stockItem) => {
       if (stockItem.warehouse !== "coming" && stockItem.warehouse !== "production") {
-        productAvailableQty += stockItem.qty;
+        productQty += stockItem.qty;
         productAvailableQty += stockItem.available;
         productBookedQty += stockItem.booked;
       }
@@ -160,6 +157,7 @@ export const getStock = async (req, res) => {
         accumulator[warehouseIndex].warehouseAvailableQty += stockItem.available;
         accumulator[warehouseIndex].warehouseBookedQty += stockItem.booked;
         accumulator[warehouseIndex].warehouseBLs.push({
+          blDate: stockItem.date,
           bl: stockItem.bl,
           blQty: stockItem.qty,
           blBookedQty: stockItem.booked,
@@ -171,13 +169,32 @@ export const getStock = async (req, res) => {
           warehouseQty: stockItem.qty,
           warehouseAvailableQty: stockItem.available,
           warehouseBookedQty: stockItem.booked,
-          warehouseBLs: [{ bl: stockItem.bl, blQty: stockItem.qty, blBookedQty: stockItem.booked, blAvailableQty: stockItem.available }],
+          warehouseBLs: [
+            {
+              bl: stockItem.bl,
+              blQty: stockItem.qty,
+              blBookedQty: stockItem.booked,
+              blAvailableQty: stockItem.available,
+              blDate: stockItem.date,
+            },
+          ],
         });
       }
-
       return accumulator;
     }, []);
     stock.push({ productId: product._id, productWarehouseQuantities, productQty, productBookedQty, productAvailableQty });
   });
   res.json(stock);
+};
+
+export const createPackingList = async (req, res) => {
+  const { exporter, /*pklNo,*/ piNo, invoiceNo, customer, buyer, date, truckItems } = req.body;
+  const pkl = { exporter, piNo, invoiceNo, customer, buyer, date, truckItems };
+  const newPackingList = new PackingList(pkl);
+  try {
+    await newPackingList.save();
+    res.status(201).json(newPackingList);
+  } catch (error) {
+    res.status(409).json({ message: error.message });
+  }
 };

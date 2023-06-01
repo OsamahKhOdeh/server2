@@ -4,6 +4,8 @@ const router = express.Router();
 router.post("/:id", addStockItem);
 router.patch("/book/:id", bookPiProducts);
 router.get("/", getStock);
+
+//localhost:5000/stock/book/6461ea04a63e014a3850fbd7
 /*
 router.post("/stock/:id", updateProductStock);
 router.patch("/stockall/:id", updateStock);

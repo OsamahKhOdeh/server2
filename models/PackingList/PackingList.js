@@ -7,7 +7,11 @@ const truckItemSchema = mongoose.Schema({
   truckDriverName: { type: String },
   truckDriverTel: { type: String },
   truckNetWeight: { type: Number, required: true },
+  truckNetWeightFake: { type: Number },
+
   truckGrossWeight: { type: Number, required: true },
+  truckGrossWeightFake: { type: Number },
+
   truckTotalPackages: { type: Number, required: true },
   truckTotalAmount: { type: Number, required: true },
   truckTotalPallets: { type: Number },
@@ -16,7 +20,11 @@ const truckItemSchema = mongoose.Schema({
     {
       productCode: { type: String, required: true },
       productGrossWeight: { type: Number },
+      productGrossWeightFake: { type: Number },
+
       productNetWeight: { type: Number },
+      productNetWeightFake: { type: Number },
+
       productId: { type: String },
       productPrice: { type: Number },
       productCategory: { type: String, required: true },
@@ -24,8 +32,12 @@ const truckItemSchema = mongoose.Schema({
       productBrand: { type: String, required: true },
       productQty: { type: Number, required: true },
       productPalletQty: { type: Number },
+      productTotalNetWeightFake: { type: Number },
+
       productTotalNetWeight: { type: Number, required: true },
-      productTotalGrossWeight: { type: Number, required: true },
+      productTotalGrossWeightFake: { type: Number },
+      productTotalGrossWeight: { type: Number },
+
       productTotalAmount: { type: Number, required: true },
       productBl: [{ type: String }],
       productWarehouses: [{ warehouse: { type: String, required: true }, qty: { type: Number, required: true } }],

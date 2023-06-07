@@ -8,9 +8,8 @@ const router = express.Router();
 export const checkSerialNumber = async (req, res) => {
   const { serialnumber } = req.body;
   try {
-    serialnumber = serialnumber.toString();
     console.log(serialnumber);
-    const foundSerialNumber = await SerialNumber.find({ SN: serialnumber });
+    const foundSerialNumber = await SerialNumber.findOne({ SN: serialnumber });
     console.log(foundSerialNumber);
     if (foundSerialNumber) {
       res.json("exist");

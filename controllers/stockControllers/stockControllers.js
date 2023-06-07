@@ -21,7 +21,7 @@ export const addStockItem = async (req, res) => {
   if (!code || !qty || !date || !warehouse || !productCode) {
     return res.status(400).json({ message: "All fields are required" });
   }
-  const stockItemObject = { productId, bl: code, qty, date, warehouse, productCode, productBrand, productCapacity };
+  const stockItemObject = { productId, bl: code, qty, available: qty, date, warehouse, productCode, productBrand, productCapacity };
 
   // Create and store new user
 
@@ -46,9 +46,9 @@ export const bookPiProducts = async (req, res) => {
   console.log(id);
 
   const proformaInvoice = await ProformaInvoice.findById(id);
-  const proforma = await SignedPiPDF.findOne({ pi_id: id }).exec();
-  if (!proforma || !proformaInvoice) {
-    return res.status(400).json({ message: "Wrong pi Number" });
+  // const proforma = await SignedPiPDF.findOne({ pi_id: id }).exec();
+  if (!proformaInvoice) {
+    return res.status(400).json({ message: "Wrong pi id" });
   }
   console.log("pi and signed found");
   const products = proformaInvoice.products;
@@ -57,33 +57,40 @@ export const bookPiProducts = async (req, res) => {
   products.map((product) => {
     productsToUpdate.push({ id: product._id, qty: product.qty });
   });
+  console.log(productsToUpdate);
   await Promise.all(
     productsToUpdate.map(async (product) => {
       const bookedItem = await bookProduct(product.id, product.qty);
       console.log("...........");
       console.log(bookedItem);
       console.log("...........");
-      proforma.booked.push(bookedItem);
+      proformaInvoice.booked.push(bookedItem);
+      //proforma.booked.push(bookedItem);
     })
   );
   // console.log(booked);
 
-  proforma.status = "BOOKED";
-  proforma.pi_done_status.push("BOOKED");
+  // proforma.status = "BOOKED";
+  //proforma.pi_done_status.push("BOOKED");
   //  proforma.booked = booked;
   console.log(booked);
-  const updatedProformaInvoice = await proforma.save();
+  // const updatedProformaInvoice = await proforma.save();
+  const updatedProformaInvoice2 = await proformaInvoice.save();
+  res.json({ result: "BOOKED Sucessfully", updatedProformaInvoice: updatedProformaInvoice2 });
 };
 
 const bookProduct = async (id, qty) => {
   let booked = { productId: id, bookedQty: [] };
   try {
     let stockItems = await StockItem.find({ productId: id });
+
     //Remove items with warehouse equal to coming or production
     stockItems = stockItems.filter((item) => item.warehouse !== "coming" && item.warehouse !== "production");
     // Sort items by bl date ascending from the oldest to the latest
     stockItems = stockItems.sort((a, b) => new Date(a.date) - new Date(b.date));
     //loop through stock items
+    console.log(stockItems.length);
+
     for (let i = 0; i < stockItems.length; i++) {
       const currentObject = stockItems[i];
 
@@ -129,9 +136,92 @@ const bookProduct = async (id, qty) => {
   return booked;
 };
 
+/* -------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------- */
+/*                                   unbook pi                                  */
+/* -------------------------------------------------------------------------- */
+
+export const unbookPiProducts = async (req, res) => {
+  const id = req.params.id;
+  console.log(id);
+
+  const proformaInvoice = await ProformaInvoice.findById(id);
+  if (!proformaInvoice) {
+    return res.status(400).json({ message: "Wrong pi id" });
+  }
+  console.log("pi and signed found");
+  const booked = proformaInvoice.booked;
+  console.log(booked);
+  if (booked.length > 0) {
+    booked.map(async (product) => {
+      let productStockItems = await StockItem.find({ productId: product.productId });
+      product.bookedQty.map(async (item) => {
+        const filteredStockItem = productStockItems.find(
+          (stockItem) => stockItem.warehouse === item.warehouse && stockItem.bl === item.code
+        );
+
+        filteredStockItem.available += item.qty;
+        filteredStockItem.booked -= item.qty;
+        await filteredStockItem.save(); // Update and save the StockItem object
+      });
+    });
+  } else {
+    res.json("No booked products to unbook");
+    return;
+  }
+  proformaInvoice.booked = [];
+  console.log(booked);
+
+  const updatedProformaInvoice2 = await proformaInvoice.save();
+  res.json({ result: "unBooked Sucessfully", updatedProformaInvoice: updatedProformaInvoice2 });
+};
+
+/* -------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------- */
+/*                                   Depart pi(pkl)                                  */
+/* -------------------------------------------------------------------------- */
+
+export const departPiProducts = async (req, res) => {
+  const id = req.params.id;
+  console.log(id);
+
+  const proformaInvoice = await ProformaInvoice.findById(id);
+  if (!proformaInvoice) {
+    return res.status(400).json({ message: "Wrong pi id" });
+  }
+  console.log("pi and signed found");
+  const booked = proformaInvoice.booked;
+  console.log(booked);
+  if (booked.length > 0) {
+    booked.map(async (product) => {
+      let productStockItems = await StockItem.find({ productId: product.productId });
+      product.bookedQty.map(async (item) => {
+        const filteredStockItem = productStockItems.find(
+          (stockItem) => stockItem.warehouse === item.warehouse && stockItem.bl === item.code
+        );
+        filteredStockItem.qty -= item.qty;
+        // filteredStockItem.available -= item.qty;
+        filteredStockItem.booked -= item.qty;
+        await filteredStockItem.save(); // Update and save the StockItem object
+      });
+    });
+  } else {
+    res.json({ message: "No Products booked to depart" });
+    return;
+  }
+  // proformaInvoice.booked = [];
+  console.log(booked);
+
+  const updatedProformaInvoice2 = await proformaInvoice.save();
+  res.json({ message: "Departed Succesfully" });
+};
+
+/* -------------------------------------------------------------------------- */
 export const getStock = async (req, res) => {
   const ids = ["645e3af02d073e0413c733f9", "645e3aba2d073e0413c733f7", "644d2f00f6ac4351d41d5c3b"];
-  const products = await Product.find();
+  const products = await Product.find().sort({ updatedAt: -1 });
   const stockItems = await StockItem.find();
 
   let stock = [];
@@ -182,12 +272,35 @@ export const getStock = async (req, res) => {
       }
       return accumulator;
     }, []);
-    stock.push({ productId: product._id, productWarehouseQuantities, productQty, productBookedQty, productAvailableQty });
+    stock.push({
+      productId: product._id,
+      image: product.image[0],
+      brand: product.brand,
+      code: product.code,
+      capacity: product.capacity,
+      updatedAt: product.updatedAt,
+      productWarehouseQuantities,
+      productQty,
+      productBookedQty,
+      productAvailableQty,
+    });
   });
   res.json(stock);
 };
 
 export const createPackingList = async (req, res) => {
+  const { exporter, /*pklNo,*/ piNo, invoiceNo, customer, buyer, date, truckItems } = req.body;
+  const pkl = { exporter, piNo, invoiceNo, customer, buyer, date, truckItems };
+  const newPackingList = new PackingList(pkl);
+  try {
+    await newPackingList.save();
+    res.status(201).json(newPackingList);
+  } catch (error) {
+    res.status(409).json({ message: error.message });
+  }
+};
+
+export const get = async (req, res) => {
   const { exporter, /*pklNo,*/ piNo, invoiceNo, customer, buyer, date, truckItems } = req.body;
   const pkl = { exporter, piNo, invoiceNo, customer, buyer, date, truckItems };
   const newPackingList = new PackingList(pkl);

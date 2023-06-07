@@ -1,9 +1,19 @@
 import express from "express";
-import { addStockItem, bookPiProducts, getStock } from "../controllers/stockControllers/stockControllers.js";
+import {
+  addStockItem,
+  bookPiProducts,
+  departPiProducts,
+  getStock,
+  unbookPiProducts,
+} from "../controllers/stockControllers/stockControllers.js";
 const router = express.Router();
 router.post("/:id", addStockItem);
 router.patch("/book/:id", bookPiProducts);
+router.patch("/unbook/:id", unbookPiProducts);
+router.patch("/depart/:id", departPiProducts);
+
 router.get("/", getStock);
+router.patch("re/:id", bookPiProducts);
 
 //localhost:5000/stock/book/6461ea04a63e014a3850fbd7
 /*

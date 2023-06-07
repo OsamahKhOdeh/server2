@@ -67,6 +67,7 @@ const proformaInvoiceSchema = mongoose.Schema(
     paymentPercentage: { type: String, default: "30" },
     deliveryDate: { type: String, default: "7" },
     manager: { type: String, default: "" },
+    booked: [{}],
   },
   {
     timestamps: true,

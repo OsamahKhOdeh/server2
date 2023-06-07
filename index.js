@@ -13,6 +13,7 @@ import poInfoRoutes from "./routes/poInfoRoutes.js";
 import purchaseOrderRoutes from "./routes/purchaseOrderRoutes.js";
 import stockRoutes from "./routes/stockRoutes.js";
 import packingListRoutes from "./routes/packingListRoutes/packingListRoutes.js";
+import warrantyRoutes from "./routes/WarrantyRoutes/WarrantyRoutes.js";
 
 import morgan from "morgan";
 import { morganLogger } from "./utils/logger.js";
@@ -55,6 +56,7 @@ app.use("/poinfo", poInfoRoutes);
 app.use("/purchaseorder", purchaseOrderRoutes);
 app.use("/stock", stockRoutes);
 app.use("/packinglist", packingListRoutes);
+app.use("/warranty", warrantyRoutes);
 
 app.get("/", (req, res) => {
   res.send("App is running");

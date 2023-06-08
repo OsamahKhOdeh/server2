@@ -53,12 +53,18 @@ const PackingListSchema = mongoose.Schema(
     manager: { type: String, default: "" },
     date: { type: Date, default: Date.now },
     exporter: { type: String, required: true },
+    pklTotalGrossWeight: { type: Number },
+    pklTotalGrossWeightFake: { type: Number },
+    pklTotalNetWeight: { type: Number },
+    pklTotalNetWeightFake: { type: Number },
+    pklTotalAmount: { type: Number },
     piNo: { type: Number, required: true },
     piId: { type: String },
     invoiceNo: { type: String, required: true },
     customer: { type: String, required: true },
     buyerAddress: { type: String, required: true },
     truckItems: [truckItemSchema],
+    pklStatus: { type: String, default: "inStock" },
   },
   { timestamps: true }
 );

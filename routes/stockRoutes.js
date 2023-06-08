@@ -5,12 +5,14 @@ import {
   departPiProducts,
   getStock,
   unbookPiProducts,
+  updateProductWarehouseBlQty,
 } from "../controllers/stockControllers/stockControllers.js";
 const router = express.Router();
 router.post("/:id", addStockItem);
 router.patch("/book/:id", bookPiProducts);
 router.patch("/unbook/:id", unbookPiProducts);
 router.patch("/depart/:id", departPiProducts);
+router.patch("/productqty/:id", updateProductWarehouseBlQty);
 
 router.get("/", getStock);
 router.patch("re/:id", bookPiProducts);

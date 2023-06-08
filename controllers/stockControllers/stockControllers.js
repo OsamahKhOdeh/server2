@@ -311,3 +311,29 @@ export const get = async (req, res) => {
     res.status(409).json({ message: error.message });
   }
 };
+
+export const updateProductWarehouseBlQty = async (req, res) => {
+  const id = req.params.id;
+  const { code, qty, date, warehouse, booked } = req.body;
+
+  console.log({ code, qty, date, warehouse, booked });
+
+  if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No product with id: ${id}`);
+  try {
+    const stockItem = await StockItem.findOne({ productId: id, warehouse: warehouse, bl: code });
+    if (!stockItem) {
+      res.json({ error: "No stock item found" });
+      return;
+    }
+    stockItem.qty = qty;
+    stockItem.available = qty;
+    try {
+      stockItem.save();
+      res.json(stockItem);
+    } catch (e) {
+      res.json({ error: e });
+    }
+  } catch (err) {
+    res.status(409).json({ message: err });
+  }
+};

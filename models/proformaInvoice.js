@@ -68,6 +68,7 @@ const proformaInvoiceSchema = mongoose.Schema(
     deliveryDate: { type: String, default: "7" },
     manager: { type: String, default: "" },
     booked: [{}],
+    stockStatus: { type: String, default: "notBooked" },
   },
   {
     timestamps: true,

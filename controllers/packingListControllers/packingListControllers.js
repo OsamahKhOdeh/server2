@@ -255,6 +255,20 @@ export const getPackingListInfoManual = async (req, res) => {
   });
 
   let totalTrucks = Math.ceil(pklTotalGrossWeight / truckPayload);
+  let allBooked = [];
+  console.log(pi.booked);
+  pi.booked.map((item1) => {
+    let bookedWarehouses = [];
+    item1.bookedQty.map((item) => {
+      let warehouseIndex = bookedWarehouses.findIndex((obj) => obj.warehouse === item.warehouse);
+      if (warehouseIndex === -1) {
+        bookedWarehouses.push({ warehouse: item.warehouse, bl: [{ bl: item.code, qty: item.qty }] });
+      } else {
+        bookedWarehouses[warehouseIndex].bl.push({ bl: item.code, qty: item.qty });
+      }
+    });
+    allBooked.push({ product: item1.product, bookedWarehouses });
+  });
 
   const pklInfoObject = {
     piCustomer,
@@ -278,6 +292,7 @@ export const getPackingListInfoManual = async (req, res) => {
     pklProducts,
     truckPayload,
     totalTrucks,
+    allBooked,
   };
 
   try {

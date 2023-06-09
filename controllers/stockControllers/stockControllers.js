@@ -9,6 +9,7 @@ import SignedPiPDF from "../../models/pdfSchema.js";
 
 import Product from "../../models/product.js";
 import PackingList from "../../models/PackingList/PackingList.js";
+import { pklStatus, stockStatus } from "../../config/piStatus.js";
 
 const router = express.Router();
 /* -------------------------------------------------------------------------- */
@@ -55,12 +56,13 @@ export const bookPiProducts = async (req, res) => {
   let productsToUpdate = [];
   let booked = [];
   products.map((product) => {
-    productsToUpdate.push({ id: product._id, qty: product.qty });
+    let prod = product.country + " " + product.category + " " + product.brand + " " + product.code + " " + product.capacity;
+    productsToUpdate.push({ id: product._id, qty: product.qty, prod: prod });
   });
   console.log(productsToUpdate);
   await Promise.all(
     productsToUpdate.map(async (product) => {
-      const bookedItem = await bookProduct(product.id, product.qty);
+      const bookedItem = await bookProduct(product.id, product.qty, product.prod);
       console.log("...........");
       console.log(bookedItem);
       console.log("...........");
@@ -75,12 +77,13 @@ export const bookPiProducts = async (req, res) => {
   //  proforma.booked = booked;
   console.log(booked);
   // const updatedProformaInvoice = await proforma.save();
+  proformaInvoice.stockStatus = stockStatus.BOOKED;
   const updatedProformaInvoice2 = await proformaInvoice.save();
   res.json({ result: "BOOKED Sucessfully", updatedProformaInvoice: updatedProformaInvoice2 });
 };
 
-const bookProduct = async (id, qty) => {
-  let booked = { productId: id, bookedQty: [] };
+const bookProduct = async (id, qty, prod) => {
+  let booked = { productId: id, bookedQty: [], product: prod };
   try {
     let stockItems = await StockItem.find({ productId: id });
 
@@ -171,6 +174,7 @@ export const unbookPiProducts = async (req, res) => {
     return;
   }
   proformaInvoice.booked = [];
+  proformaInvoice.stockStatus = stockStatus.NOT_BOOKED;
   console.log(booked);
 
   const updatedProformaInvoice2 = await proformaInvoice.save();
@@ -188,31 +192,38 @@ export const departPiProducts = async (req, res) => {
   console.log(id);
 
   const proformaInvoice = await ProformaInvoice.findById(id);
-  if (!proformaInvoice) {
-    return res.status(400).json({ message: "Wrong pi id" });
+  const pkl = await PackingList.findOne({ piId: id });
+
+  if (!proformaInvoice || !pkl) {
+    return res.status(400).json({ message: "Wrong pi id || Wrong pkl" });
   }
   console.log("pi and signed found");
   const booked = proformaInvoice.booked;
-  console.log(booked);
-  if (booked.length > 0) {
-    booked.map(async (product) => {
-      let productStockItems = await StockItem.find({ productId: product.productId });
-      product.bookedQty.map(async (item) => {
-        const filteredStockItem = productStockItems.find(
-          (stockItem) => stockItem.warehouse === item.warehouse && stockItem.bl === item.code
-        );
-        filteredStockItem.qty -= item.qty;
-        // filteredStockItem.available -= item.qty;
-        filteredStockItem.booked -= item.qty;
-        await filteredStockItem.save(); // Update and save the StockItem object
-      });
-    });
-  } else {
-    res.json({ message: "No Products booked to depart" });
+  if (pkl.pklStatus === pklStatus.DEPARTED) {
+    res.json({ msg: `pkl with number ${pkl.pklNo} for pi number ${pkl.piNo} already departed` });
     return;
   }
+  // if (booked.length > 0) {
+  //   booked.map(async (product) => {
+  //     let productStockItems = await StockItem.find({ productId: product.productId });
+  //     product.bookedQty.map(async (item) => {
+  //       const filteredStockItem = productStockItems.find(
+  //         (stockItem) => stockItem.warehouse === item.warehouse && stockItem.bl === item.code
+  //       );
+  //       filteredStockItem.qty -= item.qty;
+  //       // filteredStockItem.available -= item.qty;
+  //       filteredStockItem.booked -= item.qty;
+  //       await filteredStockItem.save(); // Update and save the StockItem object
+  //     });
+  //   });
+  // } else {
+  //   res.json({ message: "No Products booked to depart" });
+  //   return;
+  // }
   // proformaInvoice.booked = [];
-  console.log(booked);
+  pkl.pklStatus = pklStatus.DEPARTED;
+  proformaInvoice.stockStatus = stockStatus.DEPARTED;
+  await pkl.save();
 
   const updatedProformaInvoice2 = await proformaInvoice.save();
   res.json({ message: "Departed Succesfully" });

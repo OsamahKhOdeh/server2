@@ -57,7 +57,13 @@ export const bookPiProducts = async (req, res) => {
   let booked = [];
   products.map((product) => {
     let prod = product.country + " " + product.category + " " + product.brand + " " + product.code + " " + product.capacity;
-    productsToUpdate.push({ id: product._id, qty: product.qty, prod: prod });
+
+    /* --------------------------------For Solar QTY------------------------------------------ */
+    if (product.category === "Solar") {
+      console.log({ qty: product.qty / parseInt(product.capacity) });
+      productsToUpdate.push({ id: product._id, qty: product.qty / parseInt(product.capacity), prod: prod });
+    } else productsToUpdate.push({ id: product._id, qty: product.qty, prod: prod });
+    /* -------------------------------------------------------------------------- */
   });
   console.log(productsToUpdate);
   await Promise.all(

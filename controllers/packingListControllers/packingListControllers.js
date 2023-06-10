@@ -78,6 +78,7 @@ export const getPackingListInfo = async (req, res) => {
   });
 
   const piCustomer = pi.buyer_address;
+  const piCurrency = pi.currency;
   const piEmployee = pi.employee;
   const piDate = pi.date;
   const piId = pi._id;
@@ -137,6 +138,7 @@ export const getPackingListInfo = async (req, res) => {
   let totalTrucks = Math.ceil(pklTotalGrossWeight / truckPayload);
 
   const pklInfoObject = {
+    piCurrency,
     piCustomer,
     piEmployee,
     piDate,
@@ -225,27 +227,48 @@ export const getPackingListInfoManual = async (req, res) => {
     //     bookedWarehouses[warehouseIndex].qty += item.qty;
     //   }
     // });
-    pklProducts.push({
-      productCode: piProduct.code,
-      productCountry: piProduct.country,
-      productCategory: piProduct.category,
-      productCapacity: piProduct.capacity,
-      productBrand: piProduct.brand,
-      productId: piProduct._id,
-      description: description,
-      qty: piProduct.qty,
-      pallet: 0,
-      netWeight: piProduct.netWeight,
-      grossWeight: piProduct.grossWeight,
-      totalNetWeight: piProduct.qty * piProduct.netWeight,
-      totalGrossWeight: piProduct.qty * piProduct.grossWeight,
-      price: calcPrice(piProduct, pi.location, pi.currency),
-      totalAmount: calcPrice(piProduct, pi.location, pi.currency) * piProduct.qty,
-      // booked: booked,
-      // bookedWarehouses,
-    });
+    if (piProduct.category === "Solar") {
+      pklProducts.push({
+        productCode: piProduct.code,
+        productCountry: piProduct.country,
+        productCategory: piProduct.category,
+        productCapacity: piProduct.capacity,
+        productBrand: piProduct.brand,
+        productId: piProduct._id,
+        description: description,
+        qty: piProduct.qty / parseInt(piProduct.capacity),
+        pallet: 0,
+        netWeight: piProduct.netWeight * parseInt(piProduct.capacity),
+        grossWeight: piProduct.grossWeight * parseInt(piProduct.capacity),
+        totalNetWeight: (piProduct.qty / parseInt(piProduct.capacity)) * piProduct.netWeight * parseInt(piProduct.capacity),
+        totalGrossWeight: (piProduct.qty / parseInt(piProduct.capacity)) * piProduct.grossWeight * parseInt(piProduct.capacity),
+        price: calcPrice(piProduct, pi.location, pi.currency) * parseInt(piProduct.capacity),
+        totalAmount: calcPrice(piProduct, pi.location, pi.currency) * piProduct.qty * parseInt(piProduct.capacity),
+        // booked: booked,
+        // bookedWarehouses,
+      });
+    } else
+      pklProducts.push({
+        productCode: piProduct.code,
+        productCountry: piProduct.country,
+        productCategory: piProduct.category,
+        productCapacity: piProduct.capacity,
+        productBrand: piProduct.brand,
+        productId: piProduct._id,
+        description: description,
+        qty: piProduct.qty,
+        pallet: 0,
+        netWeight: piProduct.netWeight,
+        grossWeight: piProduct.grossWeight,
+        totalNetWeight: piProduct.qty * piProduct.netWeight,
+        totalGrossWeight: piProduct.qty * piProduct.grossWeight,
+        price: calcPrice(piProduct, pi.location, pi.currency),
+        totalAmount: calcPrice(piProduct, pi.location, pi.currency) * piProduct.qty,
+        // booked: booked,
+        // bookedWarehouses,
+      });
   });
-
+  console.log(pklProducts);
   pklProducts.map((pklProduct) => {
     pklTotalPackages += pklProduct.qty;
     pklTotalNetWeight += pklProduct.totalNetWeight;

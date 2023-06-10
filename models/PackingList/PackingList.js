@@ -65,6 +65,7 @@ const PackingListSchema = mongoose.Schema(
     buyerAddress: { type: String, required: true },
     truckItems: [truckItemSchema],
     pklStatus: { type: String, default: "inStock" },
+    piCurrency: { type: String, default: "USD" },
   },
   { timestamps: true }
 );

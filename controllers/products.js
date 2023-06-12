@@ -79,10 +79,7 @@ export const getProducts = async (req, res) => {
 export const getProductsByFilter = async (req, res) => {
   const { categories, countries, companies, brands } = req.query;
   const page = req.query.page;
-  console.log(page);
 
-  console.log(categories.split(","), countries.split(","));
-  console.log(companies.split(","), brands.split(","));
   const products = await Product.find();
   res.json({ data: products });
 };
@@ -90,10 +87,7 @@ export const getProductsByFilter = async (req, res) => {
 export const getProductsBySearch = async (req, res) => {
   const filters = req.query.filters;
   const page = req.query.page;
-  console.log(filters, page);
   const { categories, countries, companies, brands, capacities } = req.query;
-  console.log(categories.split(","), countries.split(","));
-  console.log(companies.split(","), brands.split(","));
   //   capacities = JSON.parse(capacities);
   //let capacities2 = JSON.parse(capacities);
   //console.log(capacities2);
@@ -123,63 +117,62 @@ export const getProductsBySearch = async (req, res) => {
     }
 */
     if (isBrands && !isCompanies && isCountries && isCategories) {
-      const products = await Product.find(Q_ALL_BRANDS);
+      const products = await Product.find(Q_ALL_BRANDS).sort({ stock: -1 });
       res.json({ data: products });
       return;
     }
     if (isBrands && isCompanies && isCountries && isCategories) {
-      const products1 = await Product.find(Q_ALL_BRANDS);
-      const products2 = await Product.find(Q_ALL_COMPANIES);
+      const products1 = await Product.find(Q_ALL_BRANDS).sort({ stock: -1 });
+      const products2 = await Product.find(Q_ALL_COMPANIES).sort({ stock: -1 });
       const products = [...products1, ...products2];
       res.json({ data: products });
       return;
     }
 
     if (isCompanies && isCountries && isCategories) {
-      const products = await Product.find(Q_ALL_COMPANIES);
-      console.log(products.length);
+      const products = await Product.find(Q_ALL_COMPANIES).sort({ stock: -1 });
       res.json({ data: products });
       return;
     }
 
     if ((isCategories && !isCountries) || (isCategories && countries.includes("All"))) {
       if (categories.includes("All")) {
-        const products = await Product.find();
+        const products = await Product.find().sort({ stock: -1 });
         res.json({ data: [...products, productsForCountries] });
         return;
       }
-      products = await Product.find(Q_ALL_CATEGORIES);
+      products = await Product.find(Q_ALL_CATEGORIES).sort({ stock: -1 });
       res.json({ data: [...products, productsForCountries] });
     } else if (!isCategories && isCountries) {
       if (countries.includes("All")) {
-        const products = await Product.find();
+        const products = await Product.find().sort({ stock: -1 });
         res.json({ data: products });
         return;
       }
-      const products = await Product.find(Q_ALL_COUNTRIES);
+      const products = await Product.find(Q_ALL_COUNTRIES).sort({ stock: -1 });
       res.json({ data: products });
       return;
     } else if (isCountries && isCategories) {
       /// All Categories & All Countries
       if (categories.split(",").includes("All") && countries.split(",").includes("All")) {
-        const products = await Product.find();
+        const products = await Product.find().sort({ stock: -1 });
         res.json({ data: [...products, con] });
         return;
       } else if (categories.split(",").includes("All")) {
-        const products = await Product.find(Q_ALL_COUNTRIES);
+        const products = await Product.find(Q_ALL_COUNTRIES).sort({ stock: -1 });
         res.json({ data: [...products, con] });
         return;
       } else if (countries.split(",").includes("All")) {
-        const products = await Product.find(Q_ALL_CATEGORIES);
+        const products = await Product.find(Q_ALL_CATEGORIES).sort({ stock: -1 });
         res.json({ data: [...products, con] });
         return;
       }
-      const products = await Product.find({ $and: [Q_ALL_CATEGORIES, Q_ALL_COUNTRIES] });
+      const products = await Product.find({ $and: [Q_ALL_CATEGORIES, Q_ALL_COUNTRIES] }).sort({ stock: -1 });
       res.json({
         data: [...products, con],
       });
     } else {
-      const products = await Product.find();
+      const products = await Product.find().sort({ stock: -1 });
       res.json({ data: [...products, productsForCountries] });
     }
   } catch (error) {
@@ -196,16 +189,11 @@ export const updateProductStock = async (req, res) => {
   update[property] = newVal;
   update["lastUpdateBy"] = employee;
 
-  console.log(id);
-  console.log(update);
-
   if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No product with id: ${id}`);
 
   const updatedProduct = await Product.findOneAndUpdate({ _id: id }, { $set: update }, function (err, result) {
     if (err) {
       res.status(404).json({ message: err.message });
-
-      console.log(err);
     } else {
       console.log("Stock Update Success");
       res.json(`product with id ${id} updated successfully`);
@@ -250,7 +238,6 @@ export const deleteProduct = asyncHandler(async (req, res) => {
 });
 
 export const updateDBOps = async (req, res) => {
-  console.log(req.body);
   try {
     Product.updateMany(
       {},
@@ -267,8 +254,6 @@ export const updateDBOps = async (req, res) => {
 export const updateStock = async (req, res) => {
   const id = req.params.id;
   const { code, qty, date, warehouse, status, booked } = req.body;
-
-  console.log({ code, qty, date, warehouse, status, booked });
 
   if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No product with id: ${id}`);
   try {
@@ -290,16 +275,11 @@ export const updateProductWarehouseBlQty = async (req, res) => {
   const id = req.params.id;
   const { code, qty, date, warehouse, booked } = req.body;
 
-  console.log({ code, qty, date, warehouse, booked });
-
   if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No product with id: ${id}`);
   try {
     const product = await Product.findOne({ _id: id });
     if (product) {
-      console.log(product.bl);
-
       const item_index = product.bl.findIndex((obj) => obj.warehouse === warehouse && obj.code === code);
-      console.log(item_index);
       product.bl[item_index].qty = qty;
       product.bl[item_index].date = date;
       product.bl[item_index].booked = booked;
@@ -319,7 +299,6 @@ export const updateProductWarehouseBlQty = async (req, res) => {
 
 export const updateProductWarehouseBlBookedQty = async (req, res) => {
   const id = req.params.id;
-  console.log(req.body);
   const { qty, warehouse, code } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No product with id: ${id}`);
@@ -345,7 +324,6 @@ export const updateProductWarehouseBlBookedQty = async (req, res) => {
 
 export const updateProductMoveToAvailable = async (req, res) => {
   const id = req.params.id;
-  console.log(req.body);
   const { date, warehouse, code } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No product with id: ${id}`);
@@ -372,7 +350,6 @@ export const updateProductMoveToAvailable = async (req, res) => {
 
 export const updateProductMoveToComing = async (req, res) => {
   const id = req.params.id;
-  console.log(req.body);
   const { date, warehouse, code, qty } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No product with id: ${id}`);
@@ -400,7 +377,6 @@ export const updateProductMoveToComing = async (req, res) => {
 
 export const bookPiProducts = async (req, res) => {
   const id = req.params.id;
-  console.log();
   const booked = [];
 
   try {
@@ -488,7 +464,6 @@ export const unbookPiProducts = async (req, res) => {
       console.log("ProformaInvoice not found");
     }
     const productsToUnbook = proforma.booked;
-    console.log(productsToUnbook);
     productsToUnbook.map((item) => {
       unBookProduct(item.productId, item.bookedQty);
     });

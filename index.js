@@ -26,6 +26,7 @@ import multer from "multer";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 import path from "path";
+import { updateStock } from "./controllers/stockControllers/stockControllers.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -113,6 +114,11 @@ app.get("/download/:filename", (req, res) => {
 });
 
 app.use(errorHandler);
+
+setInterval(() => {
+  updateStock();
+  console.log("Stock Updated Successfully Hourly");
+}, 60 * 60 * 1000);
 
 const PORT = 5000;
 /*mongoose

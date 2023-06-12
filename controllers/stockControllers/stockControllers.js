@@ -354,3 +354,49 @@ export const updateProductWarehouseBlQty = async (req, res) => {
     res.status(409).json({ message: err });
   }
 };
+
+/* -------------------------------------------------------------------------- */
+/*                                UPDATE STOCK                                */
+/* -------------------------------------------------------------------------- */
+export const updateStock = async () => {
+  try {
+    const products = await Product.find();
+    const stockItems = await StockItem.find();
+    console.log(products.length);
+    console.log(stockItems.length);
+
+    await Promise.all(
+      products.map(async (product) => {
+        const productStockItems = stockItems.filter((item) => item.productId.includes(product._id));
+        const totalQuantity = productStockItems.reduce((acc, item) => acc + item.available, 0);
+
+        product.stock = totalQuantity;
+        await product.save();
+      })
+    );
+
+    console.log();
+    ({ message: "Stock updated successfully" });
+  } catch (error) {
+    console.log();
+    ({ error: error });
+  }
+};
+
+/* -------------------------------------------------------------------------- */
+// try {
+//   const query = { palatSize: null };
+//   const update = { $set: { palatSize: 1 } }; // Set the price to 0 for documents with null price
+//   const options = { multi: true }; // Update multiple documents
+
+//   await Product.updateMany(query, update, options);
+
+//   const addPriceQuery = { palatSize: { $exists: false } };
+//   const addPriceUpdate = { $set: { palatSize: 1 } }; // Set the price to 0 for documents without a price field
+
+//   await Product.updateMany(addPriceQuery, addPriceUpdate);
+
+//   res.status(200).json({ message: "Stock updated successfullya4" });
+// } catch (error) {
+//   res.status(500).json({ error: "Failed to update stock" });
+// }

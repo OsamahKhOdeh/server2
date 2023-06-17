@@ -26,6 +26,9 @@ export const createProformaInvoice = async (req, res) => {
   const bankDetails = req.body.piInfo.bankDetails;
   const paymentPercentage = req.body.piInfo.paymentPercentage;
   const deliveryDate = req.body.piInfo.deliveryDate;
+  const documentCharges = req.body.piInfo.documentCharges;
+  const additionsDescription = req.body.piInfo.additionsDescription;
+  const discountDescription = req.body.piInfo.discountDescription;
 
   console.log("🚀 ~ file: proformaInvoice.js:23 ~ createProformaInvoice ~ bankDetails:", bankDetails);
 
@@ -43,13 +46,17 @@ export const createProformaInvoice = async (req, res) => {
     exporter,
     paymentPercentage,
     deliveryDate,
+    documentCharges,
     consignee,
     discount,
+    discountDescription,
     additions,
+    additionsDescription,
     date,
     buyer_address,
     party_of_discharge,
     final_distination,
+
     products,
   };
 

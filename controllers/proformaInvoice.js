@@ -6,6 +6,7 @@ import asyncHandler from "express-async-handler";
 import ProformaInvoice from "../models/proformaInvoice.js";
 import SignedPiPDF from "../models/pdfSchema.js";
 import { orderStatus } from "../config/piStatus.js";
+import { processStatusesEnum } from "../config/processStatus.js";
 
 const router = express.Router();
 
@@ -108,9 +109,13 @@ export const getLastPiNo = async (req, res) => {
 
 export const getAllPIs = async (req, res) => {
   try {
+    // await ProformaInvoice.updateMany(
+    //   {},
+    //   { $set: { processStatus: [{ status: "STARTED", startTime: new Date(), endTime: new Date(), duration: 0, notes: [] }] } }
+    // );
     //const total = await Product.countDocuments({});
     const proformaInvoices = await ProformaInvoice.find().sort({
-      updatedAt: -1,
+      pi_no: -1,
     });
 
     res.json(proformaInvoices);
@@ -146,7 +151,7 @@ export const updateProformaInvoiceStatus = async (req, res) => {
   const managerApproval = req.body.managerApproval;
   const financiaApproval = req.body.financiaApproval;
 
-  console.log("🚀" + req.body.financiaApproval);
+  console.log("🚀" + req.body.managerApproval);
   console.log(id);
 
   if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No ProformaInvoice with id: ${id}`);
@@ -168,9 +173,36 @@ export const updateProformaInvoiceStatus = async (req, res) => {
   }
 
   const updatedProformaInvoice = await proforma.save();
-
+  if (proforma.managerApproval === "Approved") {
+    let index = proforma.processStatus.findIndex((status) => status.status === processStatusesEnum.APPROVED_BY_SALES_MANAGER);
+    console.log(index);
+    if (index === -1) {
+      proforma.processStatus.push({
+        status: processStatusesEnum.APPROVED_BY_SALES_MANAGER,
+        startTime: new Date(),
+        endTime: new Date(),
+        duration: 0,
+        notes: [],
+      });
+    }
+  } else if (proforma.managerApproval === "Rejected") {
+  }
+  if (proforma.financiaApproval === "Approved") {
+    let index = proforma.processStatus.findIndex((status) => status.status === processStatusesEnum.APPROVED_BY_FINANCE);
+    if (index === -1) {
+      proforma.processStatus.push({
+        status: processStatusesEnum.APPROVED_BY_FINANCE,
+        startTime: new Date(),
+        endTime: new Date(),
+        duration: 0,
+        notes: [],
+      });
+    }
+  } else if (proforma.financiaApproval === "Rejected") {
+  }
+  const savedProforma = await proforma.save();
   res.json({
-    message: `${updatedProformaInvoice._id} updated and set to ${updatedProformaInvoice.status}`,
+    message: `${savedProforma._id} updated and set to ${savedProforma.status}`,
   });
 };
 

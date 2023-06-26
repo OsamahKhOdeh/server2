@@ -1,6 +1,10 @@
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
+  "https://wibxc.xyz",
+  "https://wibxc.xyz/products",
+  "https://wibxc.xyz/syria",
+  "https://wibxc.xyz/pi",
 
   "http://143.42.61.215/",
   "http://143.42.61.215",

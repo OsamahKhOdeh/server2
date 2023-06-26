@@ -23,7 +23,7 @@ export const getAll = async (req, res) => {
         exporter: 1,
       }
     ).sort({
-      pi_no: 1,
+      pi_no: -1,
     });
 
     res.json(proformaInvoices);

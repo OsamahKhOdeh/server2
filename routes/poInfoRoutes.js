@@ -10,9 +10,10 @@ import {
   createPoInfo,
   getPoInfo,
 } from "../controllers/poInfoController.js";
+import verifyJWT from "../middleware/verifyJWT.js";
 
 const router = express.Router();
-
+router.use(verifyJWT)
 router.get("/", getPoInfo);
 router.post("/", createPoInfo);
 router.patch("/supplier", addSupplier);

@@ -17,30 +17,49 @@ import {
 } from "../controllers/proformaInvoice.js";
 import verifyJWT from "../middleware/verifyJWT.js";
 import { addPayment, getAllPayments, getPiPayments, downloadPayment } from "../controllers/payments.js";
+import {
+  createProformaInvoiceSyria,
+  deleteProformaInvoiceSyria,
+  getAllPIsSyria,
+  getEmployeePIsSyria,
+  getLastPiNoSyria,
+  updateProformaInvoiceStatusSyria,
+  updateProformaInvoiceSyria,
+} from "../controllers/proformaInvoiceSyria.js";
 
 const router = express.Router();
 
 // router.use(verifyJWT)
-router.post("/", createProformaInvoice);
-router.delete("/:id", deleteProformaInvoice);
+/* ---------------------------------- SYRAI --------------------------------- */
+router.post("/syria", createProformaInvoiceSyria);
+router.delete("/syria/:id", deleteProformaInvoiceSyria);
+router.get("/syria/last", getLastPiNoSyria);
+router.get("/syria", getAllPIsSyria);
+router.get("/syria/employee", getEmployeePIsSyria);
+router.patch("/syria/:id", updateProformaInvoiceStatusSyria);
+router.patch("/update/syria/:id", updateProformaInvoiceSyria);
+/* -------------------------------------------------------------------------- */
+
+router.post("/", verifyJWT, createProformaInvoice);
+router.delete("/:id", verifyJWT, deleteProformaInvoice);
 router.get("/last", getLastPiNo);
 router.get("/", getAllPIs);
-router.get("/employee", getEmployeePIs);
+router.get("/employee", verifyJWT, getEmployeePIs);
 
-router.patch("/:id", updateProformaInvoiceStatus);
-router.patch("/update/:id", updateProformaInvoice);
+router.patch("/:id", verifyJWT, updateProformaInvoiceStatus);
+router.patch("/update/:id", verifyJWT, updateProformaInvoice);
 
 const upload = multer();
 
-router.post("/pisigned", upload.single("pdf"), uploadSignedProformaInvoice);
-router.get("/pisigned/:id", downloadSignedProformaInvoice);
-router.get("/pisigned", getAllSignedPIs);
-router.get("/pisigned/employee/:employeename", getEmployeeSignedPIs);
-router.patch("/pisigned/:id", updateSignedProformaInvoiceStatus);
-router.get("/pisignedclear", clear);
+router.post("/pisigned", verifyJWT, upload.single("pdf"), uploadSignedProformaInvoice);
+router.get("/pisigned/:id", verifyJWT, downloadSignedProformaInvoice);
+router.get("/pisigned", verifyJWT, getAllSignedPIs);
+router.get("/pisigned/employee/:employeename", verifyJWT, getEmployeeSignedPIs);
+router.patch("/pisigned/:id", verifyJWT, updateSignedProformaInvoiceStatus);
+router.get("/pisignedclear", verifyJWT, clear);
 
-router.post("/payment", upload.single("pdf"), addPayment);
-router.get("/payment", getAllPayments);
-router.get("/payment/:id", getPiPayments);
-router.get("/downloadpayment/:id", downloadPayment);
+router.post("/payment", verifyJWT, upload.single("pdf"), addPayment);
+router.get("/payment", verifyJWT, getAllPayments);
+router.get("/payment/:id", verifyJWT, getPiPayments);
+router.get("/downloadpayment/:id", verifyJWT, downloadPayment);
 export default router;

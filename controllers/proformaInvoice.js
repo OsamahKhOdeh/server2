@@ -59,6 +59,15 @@ export const createProformaInvoice = async (req, res) => {
     final_distination,
 
     products,
+    processStatus: [
+      {
+        status: processStatusesEnum.STARTED,
+        startTime: new Date(),
+        endTime: new Date(),
+        duration: 0,
+        notes: [],
+      },
+    ],
   };
 
   const newProformaInvoice = new ProformaInvoice(pi);
@@ -109,12 +118,8 @@ export const getLastPiNo = async (req, res) => {
 
 export const getAllPIs = async (req, res) => {
   try {
-    // await ProformaInvoice.updateMany(
-    //   {},
-    //   { $set: { processStatus: [{ status: "STARTED", startTime: new Date(), endTime: new Date(), duration: 0, notes: [] }] } }
-    // );
-    //const total = await Product.countDocuments({});
-    const proformaInvoices = await ProformaInvoice.find().sort({
+    // await ProformaInvoice.updateMany({}, { $set: { branch: "DUBAI" } });
+    const proformaInvoices = await ProformaInvoice.find({ $or: [{ branch: "DUBAI" }, { branch: "SYRIA", status: "Approved" }] }).sort({
       pi_no: -1,
     });
 
@@ -365,11 +370,7 @@ export const updateSignedProformaInvoiceStatus = async (req, res) => {
 
 export const clear = async (req, res) => {
   try {
-    const proformaInvoices = await SignedPiPDF.updateMany(
-      {},
-      { $set: { status: "CONFIRMED", pi_done_status: ["CONFIRMED"] } },
-      { upsert: false }
-    );
+    const proformaInvoices = await SignedPiPDF.updateMany({}, { $set: { status: "CONFIRMED", pi_done_status: ["CONFIRMED"] } }, { upsert: false });
 
     res.json("proformaInvoices");
   } catch (error) {

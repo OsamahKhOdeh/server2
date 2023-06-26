@@ -8,7 +8,11 @@ import {
   updateProductWarehouseBlQty,
   updateStock,
 } from "../controllers/stockControllers/stockControllers.js";
+import verifyJWT from "../middleware/verifyJWT.js";
 const router = express.Router();
+
+router.use(verifyJWT)
+
 router.post("/:id", addStockItem);
 router.patch("/book/:id", bookPiProducts);
 router.patch("/unbook/:id", unbookPiProducts);

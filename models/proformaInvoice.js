@@ -41,6 +41,7 @@ const proformaInvoiceSchema = mongoose.Schema(
   {
     no: { type: Number, index: true },
     date: { type: Date },
+    branch: { type: String, default: "DUBAI" },
     exporter: { type: String },
     notify_party: { type: String },
     buyer_address: { type: String },

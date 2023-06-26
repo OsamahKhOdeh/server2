@@ -12,7 +12,7 @@ import {
 
 const router = express.Router();
 
-// router.use(verifyJWT)
+ router.use(verifyJWT)
 router.post("/", createPurchaseOrder);
 router.delete("/:id", deletePurchaseOrder);
 router.get("/", getAll);

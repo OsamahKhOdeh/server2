@@ -1,4 +1,6 @@
 const allowedOrigins = [
+  "http://agints.vip",
+  "https://agints.vip",
   "http://localhost:3000",
   "http://localhost:3001",
   "https://wibxc.xyz",

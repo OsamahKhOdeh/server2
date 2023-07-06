@@ -4,7 +4,7 @@ import { addTask, createProject, getEmployeeProjects, getProjects } from "../con
 import verifyJWT from "../middleware/verifyJWT.js";
 
 const router = express.Router();
-router.use(verifyJWT)
+//router.use(verifyJWT)
 
 router.get("/", getProjects);
 router.get("/employee/:employeename", getEmployeeProjects);

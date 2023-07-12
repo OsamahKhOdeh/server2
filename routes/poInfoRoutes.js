@@ -13,7 +13,7 @@ import {
 import verifyJWT from "../middleware/verifyJWT.js";
 
 const router = express.Router();
-router.use(verifyJWT)
+//router.use(verifyJWT)
 router.get("/", getPoInfo);
 router.post("/", createPoInfo);
 router.patch("/supplier", addSupplier);

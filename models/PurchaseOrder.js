@@ -1,39 +1,31 @@
 import mongoose from "mongoose";
 import Inc from "mongoose-sequence";
+import { pklSchema } from "./schemas/pkl.js";
+import { ciSchema } from "./schemas/ci.js";
+import { blSchema } from "./schemas/bl.js";
+import { productItemSchema } from "./schemas/product.js";
+
 const AutoIncrement = Inc(mongoose);
 
-const productItemSchema = mongoose.Schema({
-  price: { type: Number, float: true },
-  capacity: { type: String, default: "" },
-  brand: { type: String, default: "" },
-  category: { type: String, default: "" },
-  code: { type: String, default: "" },
-  company: { type: String, default: "" },
-  country: { type: String, default: "" },
-  palatSize: { type: Number, default: 8 },
-  grossWeight: { type: Number, float: true },
-  netWeight: { type: Number, float: true },
-  weight: { type: Number, float: true },
-  totalWeight: { type: Number, float: true, default: 0 },
-
-  pcsInPallet: { type: Number, float: true, default: 0 },
-  palletQty: { type: Number, float: true, default: 0 },
-  qty: { type: Number, float: true, default: 0 },
-  totalAmount: { type: Number, float: true, default: 0 },
-  dimension: [{ type: String }],
-  terminal: { type: String },
-});
-
+// Define the purchase order schema
 const purchaseOrderSchema = mongoose.Schema(
   {
-    date: { type: Date },
-    exporter: { type: String },
-    notifyParty: { type: String },
-    buyerAddress: { type: String },
-    consignee: { type: String },
-    portOfOrigin: { type: String },
-    portOfDischarge: { type: String },
-    products: [productItemSchema],
+    date: { type: Date, required: true },
+    exporter: { type: String, required: true },
+    notifyParty: { type: String, required: true },
+    buyerAddress: { type: String, required: true },
+    consignee: { type: String, required: true },
+    portOfOrigin: { type: String, required: true },
+    portOfDischarge: { type: String, required: true },
+    products: {
+      type: [productItemSchema],
+      validate: {
+        validator: function (value) {
+          return value.length > 0; // At least one product item is required
+        },
+        message: "At least one product item is required.",
+      },
+    },
     totalPcs: { type: Number, float: true, default: 0 },
     totalPallets: { type: Number, float: true, default: 0 },
     totalWeight: { type: Number, float: true, default: 0 },
@@ -49,18 +41,79 @@ const purchaseOrderSchema = mongoose.Schema(
     incoterms: [{ type: String, default: "" }],
     manager: { type: String, default: "" },
     discount: { type: Number, default: 0 },
+    totalbls: { type: Number },
+    po: {
+      poNo: { type: String },
+      poFilePath: { type: String },
+    },
+    pi: {
+      piNo: { type: String },
+      piFilePath: { type: String },
+    },
+    pkl: {
+      pklNo: { type: String },
+      pklFilePath: { type: String },
+      pklInfo: pklSchema,
+    },
+    ci: {
+      ciNo: { type: String },
+      ciFilePath: { type: String },
+      ciInfo: ciSchema,
+    },
+    bl: [
+      {
+        blNo: { type: String },
+        blFilePath: { type: String },
+        blInfo: blSchema,
+        blContainers: [
+          {
+            containerNo: { type: String },
+            containerType: { type: String },
+            containerSerialsFilePath: { type: String },
+          },
+        ],
+        blForwarder: {
+          forwarderId: { type: String },
+          forwarderName: { type: String },
+          blForwardercostPerContainer: { type: Number },
+          blForwarderFreeStorageDuration: { type: String },
+          blForwarderAgreementFilePath: { type: String },
+        },
+      },
+    ],
+    coo: {
+      cooNo: { type: String },
+      cooFilePath: { type: String },
+    },
   },
   {
     timestamps: true,
   }
 );
 
+// Add pre-save hook to validate and handle errors
+purchaseOrderSchema.pre("save", function (next) {
+  if (this.totalAmount < 0) {
+    const err = new Error("Total amount cannot be negative.");
+    next(err);
+  }
+  // } else if (this.bl.length > 0 && !this.totalbls) {
+  //   const err = new Error("Total BLs must be provided if BLs are present.");
+  //   next(err);
+  // }
+  else {
+    next();
+  }
+});
+
+// Add auto-increment functionality to the "po_no" field
 purchaseOrderSchema.plugin(AutoIncrement, {
   inc_field: "po_no",
   id: "poNums",
   start_seq: 60000,
 });
 
+// Create the PurchaseOrder model
 var PurchaseOrder = mongoose.model("PurchaseOrder", purchaseOrderSchema);
 
 export default PurchaseOrder;

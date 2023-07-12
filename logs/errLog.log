@@ -52,3 +52,4 @@
 20230502	18:59:17	aba2425e-4ae1-4612-8c74-2db2882d60cd	CastError: Cast to ObjectId failed for value "64510a24d0018e54e8ac6d25\n" (type string) at path "_id" for model "ProformaInvoice"	DELETE	/pi/64510a24d0018e54e8ac6d25%0A	undefined
 20230502	18:59:50	d482d080-fa2e-4127-b5f1-06037d60e546	ReferenceError: user is not defined	DELETE	/pi/64510a24d0018e54e8ac6d25	undefined
 20230502	19:00:18	df4b4d75-62ea-4a20-90e9-ef10df2ae92e	ReferenceError: user is not defined	DELETE	/pi/64510a24d0018e54e8ac6d25	undefined
+20230708	16:36:18	4540835a-4aaf-4b1d-9faa-24ae9bffc213	ReferenceError: rateLimiter is not defined	GET	/pi	undefined

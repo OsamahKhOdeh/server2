@@ -1,0 +1,35 @@
+import mongoose from "mongoose";
+
+export const pklSchema = mongoose.Schema({
+  pklNo: { type: String },
+  supplier: { supplierId: { type: String }, supplierName: { type: String } },
+  customer: { customerId: { type: String }, customerName: { type: String } },
+  invoiceNo: { type: String },
+  address: { type: String },
+  date: { type: String },
+  deliveryTerms: { type: String },
+  shippedFrom: { type: String },
+  ShippedTo: { type: String },
+  SCNo: { type: String },
+  countryOfOrigin: { type: String },
+  piNo: { type: String },
+  products: [
+    {
+      productId: { type: String },
+      productCode: { type: String },
+      procuctCategory: { type: String },
+      productDescription: { type: String },
+      qty: { type: Number },
+      netWeight: { type: Number },
+      grossWeight: { type: Number },
+      noOfPallets: { type: Number },
+      measurment: { type: Number },
+      size: { long: { type: Number }, width: { type: Number }, height: { type: Number } },
+    },
+  ],
+  totalPackages: { type: Number },
+  totalNetWeight: { type: Number },
+  totalGrossWeight: { type: Number },
+  totalPallets: { type: Number },
+  totalMeasurements: { type: Number },
+});

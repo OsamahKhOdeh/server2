@@ -63,6 +63,7 @@ const supplierSchema = new mongoose.Schema({
         type: String,
         // required: true,
       },
+      IFSCCode: { type: String },
     },
   ],
   logo: {
@@ -85,9 +86,11 @@ const supplierSchema = new mongoose.Schema({
       },
     ],
   },
-  communicationMethod: {
-    type: String,
-  },
+  communicationMethod: [
+    {
+      type: String,
+    },
+  ],
 });
 
 // Create the Supplier model

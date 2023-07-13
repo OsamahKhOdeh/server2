@@ -4,6 +4,7 @@ import { pklSchema } from "./schemas/pkl.js";
 import { ciSchema } from "./schemas/ci.js";
 import { blSchema } from "./schemas/bl.js";
 import { productItemSchema } from "./schemas/product.js";
+import { cooSchema } from "./schemas/coo.js";
 
 const AutoIncrement = Inc(mongoose);
 
@@ -41,7 +42,7 @@ const purchaseOrderSchema = mongoose.Schema(
     incoterms: [{ type: String, default: "" }],
     manager: { type: String, default: "" },
     discount: { type: Number, default: 0 },
-    totalbls: { type: Number },
+    totalBls: { type: Number },
     po: {
       poNo: { type: String },
       poFilePath: { type: String },
@@ -75,7 +76,7 @@ const purchaseOrderSchema = mongoose.Schema(
         blForwarder: {
           forwarderId: { type: String },
           forwarderName: { type: String },
-          blForwardercostPerContainer: { type: Number },
+          blForwarderCostPerContainer: { type: Number },
           blForwarderFreeStorageDuration: { type: String },
           blForwarderAgreementFilePath: { type: String },
         },
@@ -83,6 +84,7 @@ const purchaseOrderSchema = mongoose.Schema(
     ],
     coo: {
       cooNo: { type: String },
+      cooInfo: cooSchema,
       cooFilePath: { type: String },
     },
   },

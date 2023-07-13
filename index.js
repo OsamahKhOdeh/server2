@@ -24,6 +24,18 @@ import _ from "lodash";
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+console.log(__dirname);
+console.log(
+  __dirname
+    .split("\\")
+    .slice(0, __dirname.split("\\").length - 2)
+    .join("\\")
+);
+const newDir = __dirname
+  .split("\\")
+  .slice(0, __dirname.split("\\").length - 2)
+  .join("\\");
+//fs.mkdirSync(newDir + "/ggg");
 
 dotenv.config();
 
@@ -135,6 +147,7 @@ import processTrakingRoutes from "./routes/processTrackingRoutes/processTrakingR
 import supplierRoutes from "./routes/supplierRoutes/supplierRoutes.js";
 import forwarderRoutes from "./routes/forwarderRoutes/forwarderRoutes.js";
 import mailRoutes from "./routes/communicationRoutes/mailRoutes.js";
+import customerRoutes from "./routes/customerRoutes/customerRoutes.js";
 import { logger } from "./middleware/logger.js";
 
 // Registering API routes
@@ -152,6 +165,7 @@ app.use("/process", processTrakingRoutes);
 app.use("/supplier", supplierRoutes);
 app.use("/forwarder", forwarderRoutes);
 app.use("/mail", mailRoutes);
+app.use("/customer", customerRoutes);
 /* -------------------------------------------------------------------------- */
 
 /* ------------------------------ Root Route -------------------------------- */

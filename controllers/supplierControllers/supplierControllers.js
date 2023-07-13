@@ -57,28 +57,14 @@ export const createSupplier = async (req, res) => {
     cashBackTerms,
   } = req.body;
 
-  console.log({
-    supplierName,
-    address,
-    city,
-    country,
-    postalCode,
-    contactPerson,
-    contactEmail,
-    contactPhone,
-    website,
-    taxID,
-    paymentTerms,
-    productCategories,
-    bankAccount,
-    logo,
-    notes,
-    communicationMethod,
-    cashBackTerms,
-  });
   try {
     if (!supplierName || !country || !contactPerson || !contactEmail || !contactPhone) {
       return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    const duplicate = Supplier.findOne({ supplierName: supplierName });
+    if (duplicate) {
+      return res.status(409).json({ message: "Duplicate supplier" });
     }
     const newSupplier = await Supplier.create({
       supplierName,

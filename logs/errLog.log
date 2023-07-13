@@ -53,3 +53,6 @@
 20230502	18:59:50	d482d080-fa2e-4127-b5f1-06037d60e546	ReferenceError: user is not defined	DELETE	/pi/64510a24d0018e54e8ac6d25	undefined
 20230502	19:00:18	df4b4d75-62ea-4a20-90e9-ef10df2ae92e	ReferenceError: user is not defined	DELETE	/pi/64510a24d0018e54e8ac6d25	undefined
 20230708	16:36:18	4540835a-4aaf-4b1d-9faa-24ae9bffc213	ReferenceError: rateLimiter is not defined	GET	/pi	undefined
+20230713	16:39:50	3364acff-1c55-4f30-a65c-9827eab9ea75	SyntaxError: Unexpected token } in JSON at position 530	POST	/customer	undefined
+20230713	17:32:48	2fb22096-e77d-4699-8abe-b09e757986f3	SyntaxError: Unexpected token } in JSON at position 504	POST	/customer	undefined
+20230713	18:07:40	5bf073e9-7339-40fb-81f6-70e9971c1fc2	SyntaxError: Unexpected token } in JSON at position 29	PUT	/customer/64affe23b5301216d45c1254	undefined

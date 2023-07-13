@@ -57,6 +57,10 @@ export const createForwarder = async (req, res) => {
     if (!forwarderName) {
       return res.status(400).json({ message: "Missing required fields" });
     }
+    const duplicate = await Forwarder.findOne({ forwarderName: forwarderName });
+    if (duplicate) {
+      return res.status(409).json({ message: "Duplicate Forwarder" });
+    }
     const newForwader = await Forwarder.create({
       forwarderName,
       country,

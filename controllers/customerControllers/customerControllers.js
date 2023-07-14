@@ -9,7 +9,7 @@ const createCustomer = async (req, res) => {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    const duplicate = await Customer.findOne({ name: name });
+    const duplicate = await Customer.findOne({ name: name }).lean().exec();
     if (duplicate) {
       return res.status(409).json({ message: "Duplicate customer" });
     }

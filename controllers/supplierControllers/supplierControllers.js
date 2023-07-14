@@ -62,7 +62,9 @@ export const createSupplier = async (req, res) => {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    const duplicate = Supplier.findOne({ supplierName: supplierName });
+    const duplicate = await Supplier.findOne({ supplierName: supplierName }).lean().exec();
+    console.log("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+    console.log(duplicate);
     if (duplicate) {
       return res.status(409).json({ message: "Duplicate supplier" });
     }

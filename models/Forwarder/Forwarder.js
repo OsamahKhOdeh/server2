@@ -1,34 +1,27 @@
 import mongoose from "mongoose";
+import { contactSchema } from "../schemas/contact.js";
+import { addressSchema } from "../schemas/address.js";
 const forwarderSchema = new mongoose.Schema({
-  forwarderName: {
+  name: {
     type: String,
     required: true,
   },
-  country: {
+  image: {
     type: String,
-    required: true,
   },
-  contactPerson: {
-    type: String,
-    required: true,
-  },
-  contactEmail: {
-    type: String,
-    required: true,
-  },
-  contactPhone: {
-    type: String,
-    required: true,
-  },
+  contact: [contactSchema],
+  address: addressSchema,
   website: {
     type: String,
   },
   notes: {
     type: String,
   },
-  communicationMethod: {
-    type: String,
-  },
+  communicationMethod: [
+    {
+      type: String,
+    },
+  ],
   etd: {
     type: Number,
   },

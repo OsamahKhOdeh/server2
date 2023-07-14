@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import { contactSchema } from "../schemas/contact.js";
+import { addressSchema } from "../schemas/address.js";
 
 const paymentSchema = new mongoose.Schema({
   amount: {
@@ -27,47 +29,13 @@ const financeAccountSchema = new mongoose.Schema({
   payments: [paymentSchema],
 });
 
-const contactSchema = new mongoose.Schema({
-  contactPersonName: {
-    type: String,
-  },
-  phone: {
-    type: String,
-    // required: true,
-  },
-  email: {
-    type: String,
-    // required: true,
-  },
-});
-
-const addressSchema = new mongoose.Schema({
-  street: {
-    type: String,
-    // required: true,
-  },
-  city: {
-    type: String,
-    // required: true,
-  },
-  state: {
-    type: String,
-    // required: true,
-  },
-  country: {
-    type: String,
-    required: true,
-  },
-  postalCode: {
-    type: String,
-    // required: true,
-  },
-});
-
 const customerSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
+  },
+  image: {
+    type: String,
   },
   contact: [contactSchema],
   address: addressSchema,
@@ -108,6 +76,11 @@ const customerSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  communicationMethod: [
+    {
+      type: String,
+    },
+  ],
 });
 
 const Customer = mongoose.model("Customer", customerSchema);

@@ -38,35 +38,19 @@ export const getForwarderById = async (req, res) => {
 
 /* -------------------------------------------------------------------------- */
 export const createForwarder = async (req, res) => {
-  const {
-    forwarderName,
-    country,
-    contactPerson,
-    contactEmail,
-    contactPhone,
-    website,
-    notes,
-    communicationMethod,
-    etd,
-    freeStorageDuration,
-    transitTime,
-    costPerContainer,
-    availableContainerCount,
-  } = req.body;
+  const { name, address, contact, website, notes, communicationMethod, etd, freeStorageDuration, transitTime, costPerContainer, availableContainerCount } = req.body;
   try {
-    if (!forwarderName) {
+    if (!name) {
       return res.status(400).json({ message: "Missing required fields" });
     }
-    const duplicate = await Forwarder.findOne({ forwarderName: forwarderName }).lean().exec();
+    const duplicate = await Forwarder.findOne({ name: name }).lean().exec();
     if (duplicate) {
       return res.status(409).json({ message: "Duplicate Forwarder" });
     }
     const newForwader = await Forwarder.create({
-      forwarderName,
-      country,
-      contactPerson,
-      contactEmail,
-      contactPhone,
+      name,
+      address,
+      contact,
       website,
       notes,
       communicationMethod,
@@ -92,29 +76,14 @@ export const createForwarder = async (req, res) => {
 /* -------------------------------------------------------------------------- */
 export const updateForwarder = async (req, res) => {
   const { id } = req.params;
-  const {
-    forwarderName,
-    country,
-    contactPerson,
-    contactEmail,
-    contactPhone,
-    website,
-    notes,
-    communicationMethod,
-    etd,
-    freeStorageDuration,
-    transitTime,
-    costPerContainer,
-    availableContainerCount,
-  } = req.body;
+  const { name, address, contact, website, notes, communicationMethod, etd, freeStorageDuration, transitTime, costPerContainer, availableContainerCount } = req.body;
 
   try {
     const updatedFields = {};
-    if (forwarderName) updatedFields.forwarderName = forwarderName;
-    if (country) updatedFields.country = country;
-    if (contactPerson) updatedFields.contactPerson = contactPerson;
-    if (contactEmail) updatedFields.contactEmail = contactEmail;
-    if (contactPhone) updatedFields.contactPhone = contactPhone;
+    if (name) updatedFields.name = name;
+    if (address) updatedFields.address = address;
+    if (contact) updatedFields.contact = contact;
+
     if (website) updatedFields.website = website;
     if (notes) updatedFields.notes = notes;
     if (communicationMethod) updatedFields.communicationMethod = communicationMethod;

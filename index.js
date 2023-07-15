@@ -148,6 +148,9 @@ import supplierRoutes from "./routes/supplierRoutes/supplierRoutes.js";
 import forwarderRoutes from "./routes/forwarderRoutes/forwarderRoutes.js";
 import mailRoutes from "./routes/communicationRoutes/mailRoutes.js";
 import customerRoutes from "./routes/customerRoutes/customerRoutes.js";
+import shippingAgentRoutes from "./routes/shippingAgentRoutes/shippingAgentRoutes.js";
+import clearanceAgentRoutes from "./routes/clearanceAgentRoutes/clearanceAgentRoutes.js";
+import warehouseRoutes from "./routes/warehouseRoutes/warehouseRoutes.js";
 import { logger } from "./middleware/logger.js";
 
 // Registering API routes
@@ -166,6 +169,9 @@ app.use("/supplier", supplierRoutes);
 app.use("/forwarder", forwarderRoutes);
 app.use("/mail", mailRoutes);
 app.use("/customer", customerRoutes);
+app.use("/shipping-agent", shippingAgentRoutes);
+app.use("/clearance-agent", clearanceAgentRoutes);
+app.use("/warehouse", warehouseRoutes);
 /* -------------------------------------------------------------------------- */
 
 /* ------------------------------ Root Route -------------------------------- */

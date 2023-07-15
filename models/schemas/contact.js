@@ -14,4 +14,7 @@ export const contactSchema = new mongoose.Schema({
     type: String,
     // required: true,
   },
+  position: {
+    type: String,
+  },
 });

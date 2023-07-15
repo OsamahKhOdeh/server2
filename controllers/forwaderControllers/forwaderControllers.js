@@ -38,7 +38,21 @@ export const getForwarderById = async (req, res) => {
 
 /* -------------------------------------------------------------------------- */
 export const createForwarder = async (req, res) => {
-  const { name, address, contact, website, notes, communicationMethod, etd, freeStorageDuration, transitTime, costPerContainer, availableContainerCount } = req.body;
+  const {
+    name,
+    address,
+    contact,
+    website,
+    services,
+    operatingHours,
+    notes,
+    communicationMethod,
+    etd,
+    freeStorageDuration,
+    transitTime,
+    costPerContainer,
+    availableContainerCount,
+  } = req.body;
   try {
     if (!name) {
       return res.status(400).json({ message: "Missing required fields" });
@@ -59,6 +73,8 @@ export const createForwarder = async (req, res) => {
       transitTime,
       costPerContainer,
       availableContainerCount,
+      services,
+      operatingHours,
     });
 
     res.status(201).json(newForwader);
@@ -76,7 +92,21 @@ export const createForwarder = async (req, res) => {
 /* -------------------------------------------------------------------------- */
 export const updateForwarder = async (req, res) => {
   const { id } = req.params;
-  const { name, address, contact, website, notes, communicationMethod, etd, freeStorageDuration, transitTime, costPerContainer, availableContainerCount } = req.body;
+  const {
+    name,
+    address,
+    contact,
+    website,
+    notes,
+    communicationMethod,
+    etd,
+    freeStorageDuration,
+    transitTime,
+    costPerContainer,
+    availableContainerCount,
+    services,
+    operatingHours,
+  } = req.body;
 
   try {
     const updatedFields = {};
@@ -92,6 +122,8 @@ export const updateForwarder = async (req, res) => {
     if (transitTime) updatedFields.transitTime = transitTime;
     if (costPerContainer) updatedFields.costPerContainer = costPerContainer;
     if (availableContainerCount) updatedFields.availableContainerCount = availableContainerCount;
+    if (services) updatedFields.services = services;
+    if (operatingHours) updatedFields.operatingHours = operatingHours;
 
     const updatedForwarder = await Forwarder.findByIdAndUpdate(id, updatedFields, { new: true });
     if (!updatedForwarder) {

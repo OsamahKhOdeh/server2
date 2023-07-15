@@ -29,59 +29,60 @@ const financeAccountSchema = new mongoose.Schema({
   payments: [paymentSchema],
 });
 
-const customerSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  image: {
-    type: String,
-  },
-  contact: [contactSchema],
-  address: addressSchema,
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  financeAccount: financeAccountSchema,
-  promoCode: {
-    type: String,
-  },
-  score: {
-    type: Number,
-    default: 0,
-  },
-  totalAmountBought: {
-    type: Number,
-    default: 0,
-  },
-  discount: {
-    type: Number,
-    default: 0,
-  },
-  status: {
-    type: String,
-    enum: ["Active", "Inactive"],
-    default: "Active",
-  },
-  purchases: {
-    type: Number,
-    default: 0,
-  },
-  lastPurchaseDate: {
-    type: Date,
-    default: null,
-  },
-  loyaltyPoints: {
-    type: Number,
-    default: 0,
-  },
-  communicationMethod: [
-    {
+const customerSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    image: {
       type: String,
     },
-  ],
-});
+    contact: [contactSchema],
+    address: addressSchema,
+    financeAccount: financeAccountSchema,
+    promoCode: {
+      type: String,
+    },
+    score: {
+      type: Number,
+      default: 0,
+    },
+    totalAmountBought: {
+      type: Number,
+      default: 0,
+    },
+    discount: {
+      type: Number,
+      default: 0,
+    },
+    status: {
+      type: String,
+      enum: ["Active", "Inactive"],
+      default: "Active",
+    },
+    purchases: {
+      type: Number,
+      default: 0,
+    },
+    lastPurchaseDate: {
+      type: Date,
+      default: null,
+    },
+    loyaltyPoints: {
+      type: Number,
+      default: 0,
+    },
+    communicationMethod: [
+      {
+        type: String,
+      },
+    ],
+  },
+  {
+    timestamps: true,
+  }
+);
 
 const Customer = mongoose.model("Customer", customerSchema);
 

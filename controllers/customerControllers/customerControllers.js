@@ -3,7 +3,7 @@ import Customer from "../../models/Customer/Customer.js";
 // Create a new customer
 const createCustomer = async (req, res) => {
   try {
-    const { name, contact, address } = req.body;
+    const { name, contact, address, website, notes, communicationMethod, image, operatingHours } = req.body;
 
     if (!name || !address) {
       return res.status(400).json({ error: "Missing required fields" });
@@ -13,7 +13,7 @@ const createCustomer = async (req, res) => {
     if (duplicate) {
       return res.status(409).json({ message: "Duplicate customer" });
     }
-    const customer = new Customer({ name, contact, address });
+    const customer = new Customer({ name, contact, address, website, notes, communicationMethod, image, operatingHours });
     await customer.save();
     res.status(201).json(customer);
   } catch (error) {
@@ -65,20 +65,32 @@ const getCustomerById = async (req, res) => {
 // Update a customer
 const updateCustomer = async (req, res) => {
   try {
-    const { name, email, phone, address } = req.body;
+    const { name, contact, address, website, notes, communicationMethod, image, operatingHours } = req.body;
     const updateData = {};
 
     if (name) {
       updateData.name = name;
     }
-    if (email) {
-      updateData.email = email;
+    if (contact) {
+      updateData.contact = contact;
     }
-    if (phone) {
-      updateData.phone = phone;
+    if (website) {
+      updateData.website = website;
     }
     if (address) {
       updateData.address = address;
+    }
+    if (notes) {
+      updateData.notes = notes;
+    }
+    if (communicationMethod) {
+      updateData.communicationMethod = communicationMethod;
+    }
+    if (image) {
+      updateData.image = image;
+    }
+    if (operatingHours) {
+      updateData.operatingHours = operatingHours;
     }
 
     const customer = await Customer.findByIdAndUpdate(req.params.id, updateData, { new: true });

@@ -39,6 +39,7 @@ export const getForwarderById = async (req, res) => {
 /* -------------------------------------------------------------------------- */
 export const createForwarder = async (req, res) => {
   const {
+    image,
     name,
     address,
     contact,
@@ -62,6 +63,7 @@ export const createForwarder = async (req, res) => {
       return res.status(409).json({ message: "Duplicate Forwarder" });
     }
     const newForwader = await Forwarder.create({
+      image,
       name,
       address,
       contact,
@@ -93,6 +95,7 @@ export const createForwarder = async (req, res) => {
 export const updateForwarder = async (req, res) => {
   const { id } = req.params;
   const {
+    image,
     name,
     address,
     contact,
@@ -110,6 +113,7 @@ export const updateForwarder = async (req, res) => {
 
   try {
     const updatedFields = {};
+    if (image) updatedFields.image = image;
     if (name) updatedFields.name = name;
     if (address) updatedFields.address = address;
     if (contact) updatedFields.contact = contact;

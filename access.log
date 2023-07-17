@@ -1070,3 +1070,4 @@
 ::1 - - [15/Jul/2023:11:23:36 +0000] "PUT /warehouse/64b2816c2eede3087cc9872c HTTP/1.1" 200 955 "-" "PostmanRuntime/7.32.3"
 ::1 - - [15/Jul/2023:11:23:44 +0000] "GET /warehouse/64b2816c2eede3087cc9872c HTTP/1.1" 200 955 "-" "PostmanRuntime/7.32.3"
 ::1 - - [15/Jul/2023:11:23:49 +0000] "DELETE /warehouse/64b2816c2eede3087cc9872c HTTP/1.1" 200 44 "-" "PostmanRuntime/7.32.3"
+::1 - - [15/Jul/2023:14:25:43 +0000] "POST /customer HTTP/1.1" 201 707 "-" "PostmanRuntime/7.32.3"

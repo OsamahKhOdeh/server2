@@ -78,6 +78,9 @@ const customerSchema = new mongoose.Schema(
         type: String,
       },
     ],
+    website: {
+      type: String,
+    },
   },
   {
     timestamps: true,

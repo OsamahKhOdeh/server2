@@ -1,10 +1,14 @@
 import mongoose from "mongoose";
+import { contactSchema } from "../schemas/contact.js";
+import { addressSchema } from "../schemas/address.js";
 const supplierSchema = new mongoose.Schema(
   {
     supplierName: {
       type: String,
       required: true,
     },
+    contact: [contactSchema],
+    //  address: addressSchema,
     address: {
       type: String,
       // required: true,

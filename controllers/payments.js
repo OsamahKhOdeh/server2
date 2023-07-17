@@ -5,7 +5,7 @@ import multer from "multer";
 import ProformaInvoice from "../models/proformaInvoice.js";
 import SignedPiPDF from "../models/pdfSchema.js";
 import { orderStatus } from "../config/piStatus.js";
-import payment from "../models/payment..js";
+import payment from "../models/Payment..js";
 
 const router = express.Router();
 

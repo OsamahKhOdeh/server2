@@ -31,12 +31,22 @@ console.log(
     .slice(0, __dirname.split("\\").length - 2)
     .join("\\")
 );
+console.log(
+  __dirname
+    .split("\\")
+    .slice(0, __dirname.split("\\").length - 1)
+    .join("\\")
+);
 const newDir = __dirname
   .split("\\")
   .slice(0, __dirname.split("\\").length - 2)
   .join("\\");
-//fs.mkdirSync(newDir + "/ggg");
-
+if (!fs.existsSync(newDir + "/ggg")) {
+  fs.mkdirSync(newDir + "/ggg");
+  console.log("Directory created successfully.");
+} else {
+  console.log("Directory already exists.");
+}
 dotenv.config();
 
 /* ----------------------- Middleware Configuration ------------------------- */

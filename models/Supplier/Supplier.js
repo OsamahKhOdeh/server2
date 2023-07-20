@@ -3,40 +3,43 @@ import { contactSchema } from "../schemas/contact.js";
 import { addressSchema } from "../schemas/address.js";
 const supplierSchema = new mongoose.Schema(
   {
-    supplierName: {
+    name: {
       type: String,
       required: true,
     },
     contact: [contactSchema],
+    address: addressSchema,
     //  address: addressSchema,
-    address: {
-      type: String,
-      // required: true,
-    },
-    city: {
-      type: String,
-      // required: true,
-    },
-    country: {
-      type: String,
-      required: true,
-    },
-    postalCode: {
-      type: String,
-      // required: true,
-    },
-    contactPerson: {
-      type: String,
-      required: true,
-    },
-    contactEmail: {
-      type: String,
-      required: true,
-    },
-    contactPhone: {
-      type: String,
-      required: true,
-    },
+    // address: {
+    //   type: String,
+    //   // required: true,
+    // },
+    // city: {
+    //   type: String,
+    //   // required: true,
+    // },
+    // country: {
+    //   type: String,
+    //   required: true,
+    // },
+    // postalCode: {
+    //   type: String,
+    //   // required: true,
+    // },
+    // contactPerson: {
+    //   type: String,
+    //   required: true,
+    // },
+    // contactEmail: {
+    //   type: String,
+    //   required: true,
+    // },
+    // contactPhone: {
+    //   type: String,
+    //   required: true,
+    // },
+
+    email: { type: String },
     website: {
       type: String,
     },
@@ -71,7 +74,7 @@ const supplierSchema = new mongoose.Schema(
         IFSCCode: { type: String },
       },
     ],
-    logo: {
+    image: {
       type: String,
     },
 

@@ -1,7 +1,23 @@
 import Supplier from "../../models/Supplier/Supplier.js";
 /* -------------------------------------------------------------------------- */
 export const getAllSuppliers = async (req, res) => {
+  const addressObj = {
+    street: " ",
+    city: "",
+    state: " ",
+    country: " ",
+    postalCode: " ",
+  };
+
   try {
+    // await Supplier.updateMany({}, { $set: { address: addressObj } }, function (err, result) {
+    //   if (err) {
+    //     console.log(err);
+    //   } else {
+    //     console.log(result);
+    //   }
+    // });
+
     const suppliers = await Supplier.find();
     res.json(suppliers);
   } catch (error) {
@@ -37,52 +53,30 @@ export const getSupplierById = async (req, res) => {
 
 /* -------------------------------------------------------------------------- */
 export const createSupplier = async (req, res) => {
-  const {
-    supplierName,
-    address,
-    city,
-    country,
-    postalCode,
-    contactPerson,
-    contactEmail,
-    contactPhone,
-    website,
-    taxID,
-    paymentTerms,
-    productCategories,
-    bankAccount,
-    logo,
-    notes,
-    communicationMethod,
-    cashBackTerms,
-  } = req.body;
+  const { name, address, email, website, contact, taxID, paymentTerms, productCategories, bankAccount, image, notes, communicationMethod, cashBackTerms } = req.body;
 
   try {
-    if (!supplierName || !country || !contactPerson || !contactEmail || !contactPhone) {
+    if (!name) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    const duplicate = await Supplier.findOne({ supplierName: supplierName }).lean().exec();
+    const duplicate = await Supplier.findOne({ name: name }).lean().exec();
     console.log("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
     console.log(duplicate);
     if (duplicate) {
       return res.status(409).json({ message: "Duplicate supplier" });
     }
     const newSupplier = await Supplier.create({
-      supplierName,
+      name,
       address,
-      city,
-      country,
-      postalCode,
-      contactPerson,
-      contactEmail,
-      contactPhone,
       website,
+      email,
+      contact,
       taxID,
       paymentTerms,
       productCategories,
       bankAccount,
-      logo,
+      image,
       notes,
       communicationMethod,
       cashBackTerms,
@@ -103,42 +97,20 @@ export const createSupplier = async (req, res) => {
 /* -------------------------------------------------------------------------- */
 export const updateSupplier = async (req, res) => {
   const { id } = req.params;
-  const {
-    supplierName,
-    address,
-    city,
-    country,
-    postalCode,
-    contactPerson,
-    contactEmail,
-    contactPhone,
-    website,
-    taxID,
-    paymentTerms,
-    productCategories,
-    bankAccount,
-    logo,
-    notes,
-    communicationMethod,
-    cashBackTerms,
-  } = req.body;
+  const { name, address, email, contact, website, taxID, paymentTerms, productCategories, bankAccount, image, notes, communicationMethod, cashBackTerms } = req.body;
 
   try {
     const updatedFields = {};
-    if (supplierName) updatedFields.supplierName = supplierName;
+    if (name) updatedFields.name = name;
     if (address) updatedFields.address = address;
-    if (city) updatedFields.city = city;
-    if (country) updatedFields.country = country;
-    if (postalCode) updatedFields.postalCode = postalCode;
-    if (contactPerson) updatedFields.contactPerson = contactPerson;
-    if (contactEmail) updatedFields.contactEmail = contactEmail;
-    if (contactPhone) updatedFields.contactPhone = contactPhone;
+    if (email) updatedFields.email = email;
+    if (contact) updatedFields.contact = contact;
     if (website) updatedFields.website = website;
     if (taxID) updatedFields.taxID = taxID;
     if (paymentTerms) updatedFields.paymentTerms = paymentTerms;
     if (productCategories) updatedFields.productCategories = productCategories;
     if (bankAccount) updatedFields.bankAccount = bankAccount;
-    if (logo) updatedFields.logo = logo;
+    if (image) updatedFields.image = image;
     if (notes) updatedFields.notes = notes;
     if (cashBackTerms) updatedFields.cashBackTerms = cashBackTerms;
     if (communicationMethod) updatedFields.communicationMethod = communicationMethod;

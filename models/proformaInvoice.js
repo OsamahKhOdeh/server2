@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Inc from "mongoose-sequence";
+import { statusSchema } from "./schemas/status.js";
 
 const AutoIncrement = Inc(mongoose);
 
@@ -13,9 +14,11 @@ const productSchema = mongoose.Schema({
   price: { type: Number },
   stock: { type: Number },
   freezonePrice: { type: Number },
+  syriaPrice: { type: Number },
   LocalPrice: { type: Number },
   LocalPriceAED: { type: Number },
   freezonePriceAED: { type: Number },
+  syriaPriceAED: { type: Number },
   datasheet: { type: String },
   capacity: { type: String, required: true },
   image: [{ type: String }],
@@ -73,16 +76,7 @@ const proformaInvoiceSchema = mongoose.Schema(
     manager: { type: String, default: "" },
     booked: [{}],
     stockStatus: { type: String, default: "notBooked" },
-    processStatus: [
-      {
-        status: { type: String, default: "STARTED" },
-        statusIndex: { type: Number, default: 0 },
-        startTime: { type: Date, default: new Date() },
-        endTime: { type: Date, default: new Date() },
-        duration: { type: Number, default: 0 },
-        notes: [{ type: String }],
-      },
-    ],
+    processStatus: [statusSchema],
   },
   {
     timestamps: true,

@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
+import { containerSchema } from "./container.js";
 
-export const blSchema = mongoose.Schema({
+export const blInfoSchema = mongoose.Schema({
   blNo: { type: String },
   shippingLine: { type: String },
   shipper: { type: String },
@@ -39,4 +40,23 @@ export const blSchema = mongoose.Schema({
   ladenOnBoardDate: { type: Date },
   dateOfIssue: { type: Date },
   placeOfIssue: { type: String },
+});
+
+export const blSchema = mongoose.Schema({
+  No: { type: String },
+  location: {
+    latitude: { type: Number },
+    longitude: { type: Number },
+    timestamp: { type: Date },
+  },
+  filePath: { type: String },
+  info: blInfoSchema,
+  blContainers: [containerSchema],
+  blForwarder: {
+    forwarderId: { type: String },
+    forwarderName: { type: String },
+    blForwarderCostPerContainer: { type: Number },
+    blForwarderFreeStorageDuration: { type: String },
+    blForwarderAgreementFilePath: { type: String },
+  },
 });

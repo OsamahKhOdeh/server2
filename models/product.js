@@ -14,6 +14,8 @@ const productSchema = mongoose.Schema(
     coming: { type: Number },
     lastUpdateBy: { type: String },
     freezonePrice: { type: Number },
+    netPrice: { type: Number },
+    syriaPrice: { type: Number },
     LocalPrice: { type: Number },
     datasheet: { type: String },
     capacity: { type: String, required: true },

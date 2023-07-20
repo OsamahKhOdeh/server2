@@ -6,18 +6,24 @@ import {
   deletePurchaseOrder,
   getAll,
   getEmployeePOs,
+  getPurchaseOrderById,
   updatePurchaseOrder,
   updatePurchaseOrderStatus,
-} from "../controllers/purchaceOrderControllers.js";
+} from "../controllers/purchaseOrderControllers/purchaseOrderControllers.js";
+import { assignBlForwarder, updateETFP, updateFileInfo } from "../controllers/purchaseOrderControllers/afterPiControllers.js";
 
 const router = express.Router();
 
- router.use(verifyJWT)
+//router.use(verifyJWT);
 router.post("/", createPurchaseOrder);
 router.delete("/:id", deletePurchaseOrder);
 router.get("/", getAll);
+router.get("/id/:id", getPurchaseOrderById);
 router.get("/employee", getEmployeePOs);
+router.put("/etfp/:id", updateETFP);
 router.patch("/:id", updatePurchaseOrderStatus), router.patch("/update/:id", updatePurchaseOrder);
+router.put("/info/:id", updateFileInfo);
+router.put("/assign-forwarder/:id", assignBlForwarder);
 
 updatePurchaseOrderStatus;
 

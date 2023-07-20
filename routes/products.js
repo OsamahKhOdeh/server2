@@ -16,6 +16,7 @@ import {
   updateProductMoveToComing,
   bookPiProducts,
   unbookPiProducts,
+  updateProductPrice,
 } from "../controllers/products.js";
 import verifyJWT from "../middleware/verifyJWT.js";
 
@@ -28,16 +29,17 @@ router.get("/search", getProductsBySearch);
 router.get("/", getProducts);
 //0router.get("/:id", getPost);
 
-router.post("/",verifyJWT, createProduct);
-router.patch("/:id",verifyJWT, updateProduct);
-router.patch("/stock/:id",verifyJWT, updateProductStock);
-router.patch("/stockall/:id",verifyJWT, updateStock);
-router.patch("/productqty/:id",verifyJWT, updateProductWarehouseBlQty);
-router.patch("/productbookedqty/:id",verifyJWT, updateProductWarehouseBlBookedQty);
-router.patch("/productmoveavailable/:id",verifyJWT, updateProductMoveToAvailable);
-router.patch("/productmovecoming/:id",verifyJWT, updateProductMoveToComing);
-router.patch("/bookpiproducts/:id",verifyJWT, bookPiProducts);
-router.patch("/unbookpiproducts/:id",verifyJWT, unbookPiProducts);
+router.post("/", verifyJWT, createProduct);
+router.patch("/:id", verifyJWT, updateProduct);
+router.patch("/stock/:id", verifyJWT, updateProductStock);
+router.patch("/stockall/:id", verifyJWT, updateStock);
+router.patch("/productqty/:id", verifyJWT, updateProductWarehouseBlQty);
+router.patch("/productbookedqty/:id", verifyJWT, updateProductWarehouseBlBookedQty);
+router.patch("/productmoveavailable/:id", verifyJWT, updateProductMoveToAvailable);
+router.patch("/productmovecoming/:id", verifyJWT, updateProductMoveToComing);
+router.patch("/bookpiproducts/:id", verifyJWT, bookPiProducts);
+router.patch("/unbookpiproducts/:id", verifyJWT, unbookPiProducts);
+router.patch("/price/:id", updateProductPrice);
 
 router.delete("/:id", deleteProduct);
 //router.patch("/update", updateDBOps);

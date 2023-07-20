@@ -3,3 +3,9 @@ build
 logs
 /logs/reqLog.log
 logs/
+/access.log
+/logs/errLog.log
+/logs/reqLog.log
+logs/reqLog.log
+access.log
+logs/errLog.log

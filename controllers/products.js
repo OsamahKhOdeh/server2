@@ -60,14 +60,14 @@ export const createProduct = async (req, res) => {
 
 export const getProducts = async (req, res) => {
   try {
-    /* await Product.updateMany({}, { $set: { stockAll: [] } }, function (err, result) {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log(result);
-      }
-    });
-*/
+    // await Product.updateMany({}, { $set: { freezonePrice: 0 } }, function (err, result) {
+    //   if (err) {
+    //     console.log(err);
+    //   } else {
+    //     console.log(result);
+    //   }
+    // });
+
     const products = await Product.find().sort({ _id: -1 });
 
     res.json({ data: products });
@@ -239,12 +239,7 @@ export const deleteProduct = asyncHandler(async (req, res) => {
 
 export const updateDBOps = async (req, res) => {
   try {
-    Product.updateMany(
-      {},
-      { $set: { images: ["https://res.cloudinary.com/dwen6dx2a/image/upload/v1676527391/vhk7vmtc0dtguqoyvc7a.png"] } },
-      false,
-      true
-    );
+    Product.updateMany({}, { $set: { images: ["https://res.cloudinary.com/dwen6dx2a/image/upload/v1676527391/vhk7vmtc0dtguqoyvc7a.png"] } }, false, true);
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
@@ -505,6 +500,49 @@ const unBookProduct = async (id, qtys) => {
   }
 
   return booked;
+};
+
+/* -------------------------------------------------------------------------- */
+const isPositiveNumber = (value) => {
+  return !isNaN(parseFloat(value)) && parseFloat(value) >= 0;
+};
+
+const isNonEmpty = (value) => {
+  return typeof value === "string" && value.trim() !== "";
+};
+
+export const updateProductPrice = async (req, res) => {
+  const id = req.params.id;
+  const { LocalPrice, freezonePrice, syriaPrice, netPrice } = req.body;
+  console.log({ LocalPrice, freezonePrice, syriaPrice, netPrice });
+
+  // if (!isNonEmpty(LocalPrice) || !isNonEmpty(freezonePrice) || !isNonEmpty(syriaPrice) || !isNonEmpty(netPrice)) {
+  //   return res.status(400).json({ message: "Invalid price values. Prices must be provided." });
+  // }
+
+  if (!isPositiveNumber(LocalPrice) || !isPositiveNumber(freezonePrice) || !isPositiveNumber(syriaPrice) || !isPositiveNumber(netPrice)) {
+    return res.status(400).json({ message: "Invalid price values. Prices must be positive numbers." });
+  }
+
+  try {
+    const product = await Product.findById(id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    product.LocalPrice = LocalPrice;
+    product.freezonePrice = freezonePrice;
+    product.syriaPrice = syriaPrice;
+    product.netPrice = netPrice;
+
+    await product.save();
+
+    console.log(product);
+    return res.status(200).json({ message: "Product prices updated successfully" });
+  } catch (error) {
+    console.error("Error updating product:", error);
+    return res.status(500).json({ message: "An error occurred while updating the product" });
+  }
 };
 
 export default router;

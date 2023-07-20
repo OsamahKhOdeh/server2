@@ -37,12 +37,12 @@ console.log(
     .slice(0, __dirname.split("\\").length - 1)
     .join("\\")
 );
-const newDir = __dirname
+export const HOME_DIR = __dirname
   .split("\\")
   .slice(0, __dirname.split("\\").length - 2)
   .join("\\");
-if (!fs.existsSync(newDir + "/ggg")) {
-  fs.mkdirSync(newDir + "/ggg");
+if (!fs.existsSync(HOME_DIR + "/po")) {
+  fs.mkdirSync(HOME_DIR + "/po");
   console.log("Directory created successfully.");
 } else {
   console.log("Directory already exists.");
@@ -162,6 +162,7 @@ import shippingAgentRoutes from "./routes/shippingAgentRoutes/shippingAgentRoute
 import clearanceAgentRoutes from "./routes/clearanceAgentRoutes/clearanceAgentRoutes.js";
 import warehouseRoutes from "./routes/warehouseRoutes/warehouseRoutes.js";
 import { logger } from "./middleware/logger.js";
+import fileRoutes from "./routes/fileRoutes/fileRoutes.js";
 
 // Registering API routes
 app.use("/products", productRoutes);
@@ -182,6 +183,7 @@ app.use("/customer", customerRoutes);
 app.use("/shipping-agent", shippingAgentRoutes);
 app.use("/clearance-agent", clearanceAgentRoutes);
 app.use("/warehouse", warehouseRoutes);
+app.use("/file", fileRoutes);
 /* -------------------------------------------------------------------------- */
 
 /* ------------------------------ Root Route -------------------------------- */

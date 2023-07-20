@@ -57,3 +57,4 @@
 20230713	17:32:48	2fb22096-e77d-4699-8abe-b09e757986f3	SyntaxError: Unexpected token } in JSON at position 504	POST	/customer	undefined
 20230713	18:07:40	5bf073e9-7339-40fb-81f6-70e9971c1fc2	SyntaxError: Unexpected token } in JSON at position 29	PUT	/customer/64affe23b5301216d45c1254	undefined
 20230714	12:10:41	a9275ae2-3678-48af-9b4f-d86c16d2112a	SyntaxError: Unexpected end of JSON input	POST	/customer	undefined
+20230718	13:32:40	13c36ff5-e646-4e0a-be42-391f63fa74b3	SyntaxError: Unexpected token i in JSON at position 62	PUT	/purchaseorder/info/64b50c27321bcd2eacdc41ef	undefined

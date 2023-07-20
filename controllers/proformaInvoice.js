@@ -156,7 +156,7 @@ export const updateProformaInvoiceStatus = async (req, res) => {
   const managerApproval = req.body.managerApproval;
   const financiaApproval = req.body.financiaApproval;
 
-  console.log("🚀" + req.body.managerApproval);
+  console.log("🚀" + finance, financiaApproval, financeMessage);
   console.log(id);
 
   if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No ProformaInvoice with id: ${id}`);
@@ -206,9 +206,7 @@ export const updateProformaInvoiceStatus = async (req, res) => {
   } else if (proforma.financiaApproval === "Rejected") {
   }
   const savedProforma = await proforma.save();
-  res.json({
-    message: `${savedProforma._id} updated and set to ${savedProforma.status}`,
-  });
+  res.json(savedProforma);
 };
 
 export const updateProformaInvoice = async (req, res) => {

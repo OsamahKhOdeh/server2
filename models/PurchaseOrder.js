@@ -5,6 +5,7 @@ import { ciSchema } from "./schemas/ci.js";
 import { blSchema } from "./schemas/bl.js";
 import { productItemSchema } from "./schemas/product.js";
 import { cooSchema } from "./schemas/coo.js";
+import { statusSchema } from "./schemas/status.js";
 
 const AutoIncrement = Inc(mongoose);
 
@@ -43,49 +44,33 @@ const purchaseOrderSchema = mongoose.Schema(
     manager: { type: String, default: "" },
     discount: { type: Number, default: 0 },
     totalBls: { type: Number },
+    ETFP: { type: Date }, //The estimated time of finishing production
+    caseNotes: { type: String },
+    processStatus: [statusSchema],
+    financialStatus: [statusSchema],
     po: {
-      poNo: { type: String },
-      poFilePath: { type: String },
+      No: { type: String },
+      filePath: { type: String },
     },
     pi: {
-      piNo: { type: String },
-      piFilePath: { type: String },
+      No: { type: String },
+      filePath: { type: String },
     },
     pkl: {
-      pklNo: { type: String },
-      pklFilePath: { type: String },
-      pklInfo: pklSchema,
+      No: { type: String },
+      filePath: { type: String },
+      info: pklSchema,
     },
     ci: {
-      ciNo: { type: String },
-      ciFilePath: { type: String },
-      ciInfo: ciSchema,
+      No: { type: String },
+      filePath: { type: String },
+      info: ciSchema,
     },
-    bl: [
-      {
-        blNo: { type: String },
-        blFilePath: { type: String },
-        blInfo: blSchema,
-        blContainers: [
-          {
-            containerNo: { type: String },
-            containerType: { type: String },
-            containerSerialsFilePath: { type: String },
-          },
-        ],
-        blForwarder: {
-          forwarderId: { type: String },
-          forwarderName: { type: String },
-          blForwarderCostPerContainer: { type: Number },
-          blForwarderFreeStorageDuration: { type: String },
-          blForwarderAgreementFilePath: { type: String },
-        },
-      },
-    ],
+    bl: [blSchema],
     coo: {
-      cooNo: { type: String },
-      cooInfo: cooSchema,
-      cooFilePath: { type: String },
+      No: { type: String },
+      info: cooSchema,
+      filePath: { type: String },
     },
   },
   {

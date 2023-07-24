@@ -201,6 +201,8 @@ connect()
   .then(() => {
     console.log("Connected to the database");
     const PORT = process.env.PORT || 5000;
+    // const PORT = 5001;
+
     app.listen(PORT, () => {
       console.log(`Server running on Port: ${PORT}`);
     });

@@ -49,6 +49,65 @@ export const createPackingList = async (req, res) => {
   });
 };
 
+export const updatePackingList = async (req, res) => {
+  const { id } = req.params;
+  const newPkl = req.body;
+
+  try {
+    const existingPackingList = await PackingList.findById(id);
+    if (!existingPackingList) {
+      return res.status(404).json({ error: "Packing list not found." });
+    }
+    if (!newPkl.invoiceNo || newPkl.invoiceNo.length < 3) {
+      return res.status(400).json({ error: "invoiceNo must be at least 3 characters long." });
+    }
+    if (!newPkl.exporter || newPkl.exporter.length < 3) {
+      return res.status(400).json({ error: "Exporter must be at least 3 characters long." });
+    }
+    if (!newPkl.employee || newPkl.employee.length < 3) {
+      return res.status(400).json({ error: "Employee name must be at least 3 characters long." });
+    }
+    // if (isNaN(newPkl.pklTotalGrossWeight) || newPkl.pklTotalGrossWeight < 0) {
+    //   return res.status(400).json({ error: "Invalid pklTotalGrossWeight value." });
+    // }
+    // if (isNaN(newPkl.pklTotalNetWeight) || newPkl.pklTotalNetWeight < 0) {
+    //   return res.status(400).json({ error: "Invalid pklTotalNetWeight value." });
+    // }
+    // if (isNaN(newPkl.pklTotalAmount) || newPkl.pklTotalAmount < 0) {
+    //   return res.status(400).json({ error: "Invalid pklTotalAmount value." });
+    // }
+    if (!newPkl.piNo || isNaN(newPkl.piNo) || newPkl.piNo <= 0) {
+      return res.status(400).json({ error: "Invalid piNo value." });
+    }
+    if (!newPkl.customer || newPkl.customer.length < 3) {
+      return res.status(400).json({ error: "Customer name must be at least 3 characters long." });
+    }
+    if (!newPkl.buyerAddress || newPkl.buyerAddress.length < 5) {
+      return res.status(400).json({ error: "Buyer address must be at least 5 characters long." });
+    }
+    if (!newPkl.truckItems || !Array.isArray(newPkl.truckItems) || newPkl.truckItems.length === 0) {
+      return res.status(400).json({ error: "At least one truck item is required." });
+    }
+    existingPackingList.set(newPkl);
+
+    const updatedPackingList = await existingPackingList.save();
+
+    res.status(200).json(updatedPackingList);
+  } catch (error) {
+    if (error.name === "ValidationError") {
+      const validationErrors = {};
+      for (let field in error.errors) {
+        validationErrors[field] = error.errors[field].message;
+      }
+      console.log("Validation errors:", validationErrors);
+      return res.status(400).json({ errors: validationErrors });
+    } else {
+      console.log("Error:", error);
+      return res.status(500).json({ error: "An unexpected error occurred." });
+    }
+  }
+};
+
 export const getPackingListInfo = async (req, res) => {
   const piNo = req.params.id;
   const pi = await ProformaInvoice.findOne({ pi_no: piNo });
